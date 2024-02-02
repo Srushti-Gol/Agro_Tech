@@ -1,0 +1,79 @@
+.d-form-container {
+    display: flex;
+    /* height: 90vh; */
+    overflow: hidden;
+  }
+  
+  .d-form-text-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 67%; /* Adjust the width as needed */
+  }
+  
+  .steps-container {
+    width: 33%; /* Adjust the width as needed */
+    margin: 30px;
+    border-radius: 20px;
+    background-image: url('https://themes.muffingroup.com/be/farm2/wp-content/uploads/2020/12/farm2-sectionbg4.png');
+    background-repeat: repeat;
+    background-position: center;
+    padding: 50px;
+  }
+  
+  .d-form-container .card-title {
+    text-align: center;
+  }
+  
+  .btn {
+    margin-left: 35%; 
+    margin-top: 2%;
+  }
+  
+  .btn-primary {
+    background-color: #274135;
+    color: #fef6fc;
+    border-color: rgba(14, 253, 62, 0);
+  }
+  
+  .btn-primary:hover {
+    background-color: #5e9b50;
+    color: #faf0f8;
+    border-color: rgba(0, 129, 242, 0);
+  }
+  
+  label {
+    font-size: 1rem;
+    color: black;
+  }
+  
+  .form-control::placeholder {
+    color: #aeaeae;
+  }
+  
+  .form-control {
+    padding: 15px;
+    font-size: 1rem;
+    border-radius: 55px;
+    color: black;
+  }
+  
+  span {
+    color: red;
+    font-weight: 700;
+  }
+  
+  .form-control:focus {
+    border-color: black;
+    box-shadow: none;
+    border-radius: 20px;
+    border-radius: 55px;
+  }
+  
+  .underline {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  

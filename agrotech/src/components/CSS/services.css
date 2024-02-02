@@ -1,0 +1,35 @@
+.service{
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.s_img{
+  max-width: 550px;
+  height: auto;
+  margin-left: 20px;
+  margin-right: 20px;
+} 
+
+.service .content{
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.service .btn-primary {
+  background-color: #274135;
+  color: #fdf0d5;
+  border: none;
+}
+
+.service .btn-primary:hover {
+  background-color: #5e9b50;
+  color: #fdf0d5;
+  border: none;
+}
+
+.service .content h2{
+  margin-bottom: 30px;
+}
+
+.service .content p{
+  margin-bottom: 30px;
+}

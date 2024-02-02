@@ -1,0 +1,19 @@
+h2 {
+    padding: 20px;
+    text-align: center;
+}
+
+section:nth-child(even) {
+    background-color: rgb(241, 241, 241);
+}
+
+section {
+    margin: 40px;
+    min-height: 100vh;
+}
+
+iframe {
+    height: 300px;
+    width: 400px;
+    margin: 20px;
+}

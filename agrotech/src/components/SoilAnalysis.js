@@ -15,10 +15,7 @@ function SoilAnalysis() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add logic for submitting the form, including image data.
-    console.log('Form Data:', formData);
-    console.log('Performing soil analysis...');
+    
   };
 
   return (

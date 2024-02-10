@@ -102,4 +102,18 @@ public class AgrotechApplication {
             return "{}"; 
         }
     }
+
+    @PostMapping("/predictSoil")
+    public String predictSoil(@RequestBody byte[] imageData) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:5000/predictSoil";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        
+        HttpEntity<byte[]> requestEntity = new HttpEntity<>(imageData, headers);
+
+        String prediction = restTemplate.postForObject(url, requestEntity, String.class);
+        return prediction;
+    }
 }

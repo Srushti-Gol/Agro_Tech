@@ -21,10 +21,26 @@ function FertilizerRecommendation() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Form Data:", formData);
+        try {
+            console.log(JSON.stringify(formData));
+            const response = await fetch('http://localhost:8080/predictFert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch prediction');
+            }
+            const data = await response.json();
+            console.log('Prediction:', data.prediction);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     return (

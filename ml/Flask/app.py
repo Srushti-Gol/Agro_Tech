@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -68,6 +69,39 @@ def predict_fert():
     print(prediction)
     # Return the prediction
     return jsonify({'prediction': prediction[0]})
+
+
+# for Yield Prediction
+YieldPreModel = joblib.load('../models/YieldPreModel.pkl')
+
+ds_yield = pd.read_csv("../../../../Dataset/crop_production.csv")
+ds_yield = ds_yield.drop(['Crop_Year'], axis=1)
+ds_yield = ds_yield.drop(['State_Name'], axis=1)
+ds_yield = ds_yield.dropna()
+
+X_yield = ds_yield.drop(['Production'], axis=1)
+Y_yield = ds_yield['Production']
+
+x_train_yield, x_test_yield, y_train_yield, y_test_yield = train_test_split(X_yield, Y_yield, test_size=0.25, random_state=0)
+
+categorical_cols_yield = ['District_Name', 'Season', 'Crop']
+
+ohe_yield = OneHotEncoder(handle_unknown='ignore')
+ohe_yield.fit(x_train_yield[categorical_cols_yield])
+
+@app.route('/predictYield', methods=['POST'])
+def predict_yield():
+    data = request.get_json()
+
+    print(data)
+    user_input_yield = pd.DataFrame([[data['District_Name'], data['Season'], data['Crop'], int(data['Area'])]], columns=['District_Name', 'Season', 'Crop', 'Area'])
+    user_input_categorical_yield = ohe_yield.transform(user_input_yield[categorical_cols_yield])
+    user_input_final_yield = np.hstack((user_input_categorical_yield.toarray(), user_input_yield.drop(categorical_cols_yield, axis=1)))
+
+    # Make the prediction
+    prediction_yield = YieldPreModel.predict(user_input_final_yield)
+    print(prediction_yield)
+    return jsonify({'prediction': prediction_yield[0]})
 
 
 if __name__ == '__main__':

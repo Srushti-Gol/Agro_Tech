@@ -17,12 +17,27 @@ function CropYieldPrediction() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Form Data:", formData);
+        try {
+            console.log(JSON.stringify(formData));
+            const response = await fetch('http://localhost:8080/predictYield', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch prediction');
+            }
+            const data = await response.json();
+            console.log('Prediction:', data.prediction);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
-
     return (
         <div className="d-form-container">
             <div className="d-form-text-section">
@@ -881,7 +896,7 @@ function CropYieldPrediction() {
                                         placeholder="Enter Area in Hectares on which you grow crop"
                                         type="number"
                                         className="form-control"
-                                        name="Temperature"
+                                        name="Area"
                                         value={formData.Area}
                                         onChange={handleChange}
                                         required
@@ -889,6 +904,7 @@ function CropYieldPrediction() {
                                     <div className="invalid-feedback">Area is required</div>
                                 </div>
                             </div>
+
                             <div className="align-items-center">
                                 <button type="submit" className="btn btn-primary">
                                     Predict

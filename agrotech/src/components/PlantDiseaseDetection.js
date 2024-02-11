@@ -14,11 +14,29 @@ function PlantDiseaseDetection() {
         });
       };
     
-      const handleSubmit = (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add logic for submitting the form, including image data.
-        console.log('Form Data:', formData);
-      };
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append("image", formData.plantImage);
+    
+            const response = await fetch("http://localhost:5000/predictDisease", {
+                method: "POST",
+                body: formDataToSend,
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to detect plant disease.");
+            }
+
+            const data = await response.json();
+            console.log("Detection Result:", data);
+            // Add logic to handle detection result, such as displaying it to the user.
+        } catch (error) {
+            console.error("Error:", error.message);
+            // Add logic to handle errors, such as displaying an error message to the user.
+        }
+    };
     
       return (
         <div className="d-form-container">

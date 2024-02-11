@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify ,session
 from flask_cors import CORS
 import joblib
 import numpy as np
@@ -6,15 +6,69 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
-import tensorflow as tf
-from tensorflow.keras.preprocessing import image
+from pymongo import MongoClient
+from bson import json_util
 
 app = Flask(__name__)
+app.secret_key = 'secret_key'
 CORS(app)  # Enable CORS for all routes
+
+
+
+# Connect to MongoDB
+client = MongoClient('mongodb+srv://golsrushti1:ee5Os87Sd70n4Z51@cluster0.3mjf7q7.mongodb.net/Authentication')
+db = client['Authentication']
+auth_collection = db['user']
+
+
+#for login  
+
+@app.route('/login', methods=['POST'])
+def api_login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'message': 'Email and password are required'}), 400
+
+    user = auth_collection.find_one({'email': email})
+
+    if user:
+        if user['password'] == password:
+            session['user'] = {
+                'email': user['email'],
+                'name': user['name']
+            }
+            # Convert ObjectId to string
+            user['_id'] = str(user['_id'])
+            return jsonify({'message': 'Login successful', 'user': user})
+        else:
+            return jsonify({'message': 'Incorrect password'}), 401
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+#for Signup
+@app.route('/signup', methods=['POST'])
+def api_signup():
+    data = request.get_json()
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+
+    user = {
+        'name': name,
+        'email': email,
+        'password': password
+    }
+    
+    auth_collection.insert_one(user)
+    print("Signup successful")
+    return jsonify({'message': 'Signup successful'})
+
 
 # for Crop Recommendation
 CropRecModel = joblib.load('../models/CropRecModel.joblib')
-
 @app.route('/predictCrop', methods=['POST'])
 def predict_crop():
     data = request.get_json()

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import farmImage from '../assets/farm1.jpg';
 import './CSS/login.css';
-import 'bootstrap/dist/css/bootstrap.min.css'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -19,27 +20,22 @@ function Login() {
     });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await fetch(isRegister ? 'http://localhost:8080/signup' : 'http://localhost:8080/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
-      console.log("successful");
-    } else {
-      console.log("error");
+    try {
+      const response = await axios.post(isRegister ? `http://localhost:5000/signup` : `http://localhost:5000/login`, formData);
+      console.log(response.data);
+      localStorage.setItem("user",response.data)
+      console.log(localStorage.getItem("user"))
+      
+      setIsRegister(true);
+      
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
+  };
+
 
 
   const toggleForm = () => {
@@ -87,8 +83,8 @@ const handleSubmit = async (e) => {
                 </label>
                 <input
                   id="email"
-                    placeholder="Enter your Email address "
-                    type="email"
+                  placeholder="Enter your Email address "
+                  type="email"
                   className="form-control"
                   name="email"
                   value={formData.email}
@@ -108,8 +104,8 @@ const handleSubmit = async (e) => {
                 <input
                   id="password"
                   type="password"
-                    placeholder="Enter Password"
-                    className="form-control"
+                  placeholder="Enter Password"
+                  className="form-control"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}

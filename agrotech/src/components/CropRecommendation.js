@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import './CSS/toast.css';
 import "./CSS/form.css";
 
 function CropRecommendation() {
@@ -23,6 +25,19 @@ function CropRecommendation() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // console.log("Hii");
+        const emptyFields = [];
+        for (const key in formData) {
+            if (formData.hasOwnProperty(key) && (formData[key] === "" || formData[key] === 0 || formData[key] === undefined)) {
+                emptyFields.push(key);
+            }
+        }
+
+        if (emptyFields.length > 0) {
+            toast.error(`Please fill in the following fields: ${emptyFields.join(", ")}`);
+            return;
+        }
+
         try {
             console.log(JSON.stringify(formData));
             const response = await fetch('http://localhost:5000/predictCrop', {
@@ -44,6 +59,11 @@ function CropRecommendation() {
 
     return (
         <div className="d-form-container">
+            <ToastContainer 
+                className="Toastify__toast-container" 
+                toastClassName="Toastify__toast" 
+                bodyClassName="Toastify__toast-body"
+            />
             <div className="d-form-text-section">
                 <div className="col-xxl-8 col-xl-9 col-lg-9 col-md-7 col-sm-9">
                     <div className="card-body p-5">

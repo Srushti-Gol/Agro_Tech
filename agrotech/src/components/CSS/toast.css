@@ -1,0 +1,17 @@
+/* Custom toast container styles */
+.Toastify__toast-container {
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+  }
+  
+  /* Custom toast notification styles */
+  .Toastify__toast {
+    border-radius: 6px;
+    font-size: 20px;
+  }
+  
+  /* Custom toast notification body styles */
+  .Toastify__toast-body {
+    padding: 10px 15px;
+  }
+  

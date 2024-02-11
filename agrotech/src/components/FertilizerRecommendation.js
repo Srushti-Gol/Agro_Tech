@@ -26,7 +26,7 @@ function FertilizerRecommendation() {
 
         try {
             console.log(JSON.stringify(formData));
-            const response = await fetch('http://localhost:8080/predictFert', {
+            const response = await fetch('http://localhost:5000/predictFert', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

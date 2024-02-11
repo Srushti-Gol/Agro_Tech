@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import farmImage from '../assets/farm1.jpg';
 import './CSS/login.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import axios from 'axios'; 
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -20,21 +19,28 @@ function Login() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // const endpoint = isRegister ? 'signup' : 'login';
+  try {
+    const response = await fetch(isRegister ? 'http://localhost:8080/signup' : 'http://localhost:8080/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
 
-  //   try {
-  //     const response = await axios.post(http://127.0.0.1:5000/api/${endpoint}, formData);
-  //     console.log(response.data);
-  //     // Handle success, e.g., redirect to dashboard
-  //   } catch (error) {
-  //     // setError('Invalid credentials');
-  //     // Handle error, e.g., show error message
-  //   }
-  // //Redirect User to Home page!!
-  };
+    if (response.ok) {
+      console.log("successful");
+    } else {
+      console.log("error");
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
   const toggleForm = () => {
     setIsRegister(!isRegister);

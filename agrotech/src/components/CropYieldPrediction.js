@@ -22,7 +22,7 @@ function CropYieldPrediction() {
 
         try {
             console.log(JSON.stringify(formData));
-            const response = await fetch('http://localhost:8080/predictYield', {
+            const response = await fetch('http://localhost:5000/predictYield', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

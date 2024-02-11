@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./CSS/form.css";
+import axios from 'axios'; // Import Axios library
 
 function SoilAnalysis() {
   const [formData, setFormData] = useState({
@@ -14,9 +15,25 @@ function SoilAnalysis() {
     });
   };
 
-  const handleSubmit = (e) => {
-    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('soilImage', formData.soilImage);
+  
+      const response = await axios.post('http://localhost:5000/predictSoil', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(formDataToSend);
+      console.log(response.data); // Handle response data here, maybe display it to the user
+    } catch (error) {
+      console.error('Error analyzing soil:', error);
+      // Handle error, maybe display an error message to the user
+    }
   };
+  
 
   return (
     <div className="d-form-container">

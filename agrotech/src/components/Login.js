@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import './CSS/toast.css';
 import farmImage from '../assets/farm1.jpg';
 import './CSS/login.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -23,12 +25,28 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const emptyFields = [];
+    for (const key in formData) {
+        if (formData.hasOwnProperty(key) && (formData[key] === "" || formData[key] === 0 || formData[key] === undefined)) {
+            if(key === 'name' && isRegister)
+              emptyFields.push(key);
+            else if(key !== 'name') {
+              emptyFields.push(key);
+            }
+        }
+    }
+
+    if (emptyFields.length > 0) {
+        toast.error(`Please fill in the following fields: ${emptyFields.join(", ")}`);
+        return;
+    }
+
     try {
       const response = await axios.post(isRegister ? `http://localhost:5000/signup` : `http://localhost:5000/login`, formData);
       console.log(response.data);
       localStorage.setItem("user",response.data)
       console.log(localStorage.getItem("user"))
-      
+      window.location.href = '/';
       setIsRegister(true);
       
     } catch (error) {
@@ -39,11 +57,17 @@ function Login() {
 
 
   const toggleForm = () => {
-    setIsRegister(!isRegister);
+    setIsRegister((isRegister) => !isRegister);
+    // console.log("hii");
   };
 
   return (
     <div className="login-container">
+      <ToastContainer 
+                className="Toastify__toast-container" 
+                toastClassName="Toastify__toast" 
+                bodyClassName="Toastify__toast-body"
+      />
       <div className="login-image-section">
         <img src={farmImage} alt="hello" />
       </div>

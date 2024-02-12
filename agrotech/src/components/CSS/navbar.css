@@ -48,14 +48,14 @@ body {
   margin-right: 60px;
 }
 
-.nav-elements ul a {
+.nav-elements ul a , button{
   font-size: 16px;
   font-weight: 400;
   color: #fdf0d5;
   text-decoration: none;
 }
 
-.nav-elements ul a.active {
+.nav-elements ul a.active ,  button{
   color: #f6f0ee;
   font-weight: 500;
   position: relative;

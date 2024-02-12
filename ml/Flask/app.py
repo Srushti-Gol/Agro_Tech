@@ -66,6 +66,11 @@ def api_signup():
     print("Signup successful")
     return jsonify({'message': 'Signup successful'})
 
+#logout
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'Logout successful'})
 
 # for Crop Recommendation
 CropRecModel = joblib.load('../models/CropRecModel.joblib')

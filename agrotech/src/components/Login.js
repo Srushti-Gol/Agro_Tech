@@ -28,7 +28,7 @@ function Login() {
       console.log(response.data);
       localStorage.setItem("user",response.data)
       console.log(localStorage.getItem("user"))
-      
+      window.location.href = '/';
       setIsRegister(true);
       
     } catch (error) {

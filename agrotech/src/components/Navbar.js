@@ -1,20 +1,39 @@
-import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { ReactComponent as Hamburger } from '../assets/h.svg'
-import './CSS/navbar.css'
+import { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import { ReactComponent as Hamburger } from '../assets/h.svg';
+import axios from 'axios';
+import './CSS/navbar.css';
 
 const Navbar = () => {
-  const [showNavbar, setShowNavbar] = useState(false)
+  const [showNavbar, setShowNavbar] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const history = useHistory();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
+  }, []);
 
   const handleShowNavbar = () => {
-    setShowNavbar(!showNavbar)
-  }
+    setShowNavbar(!showNavbar);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.get('http://localhost:5000/logout');
+      localStorage.removeItem('user');
+      setIsLoggedIn(false);
+      // history.push('/login');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <nav className="navbar">
       <div className="container">
         <div className="logo">
-        <b>AgroTech</b>
+          <b>AgroTech</b>
         </div>
         <div className="menu-icon" onClick={handleShowNavbar}>
           <Hamburger />
@@ -40,14 +59,20 @@ const Navbar = () => {
             <li>
               <NavLink to="/sf">SmartFarming</NavLink>
             </li>
-            <li>
-              <NavLink to="/login">SignIn</NavLink>
-            </li>
+            {isLoggedIn ? (
+              <li>
+                <NavLink to="/login" onClick={handleLogout}>Logout</NavLink>
+              </li>
+            ) : (
+              <li>
+                <NavLink to="/login">SignIn</NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

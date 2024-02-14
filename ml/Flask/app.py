@@ -3,6 +3,8 @@ from flask_cors import CORS
 import joblib
 import numpy as np
 import pandas as pd
+import os
+from dotenv import load_dotenv
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
@@ -16,8 +18,12 @@ CORS(app)  # Enable CORS for all routes
 
 
 # Connect to MongoDB
-client = MongoClient('mongodb+srv://golsrushti1:ee5Os87Sd70n4Z51@cluster0.3mjf7q7.mongodb.net/Authentication')
-db = client['Authentication']
+load_dotenv()
+MONGODB_URI = os.getenv('MONGODB_URI')
+client = MongoClient(MONGODB_URI)
+db = client.get_default_database()
+
+
 auth_collection = db['user']
 
 

@@ -10,6 +10,7 @@ import FertilizerRecommendation from './components/FertilizerRecommendation';
 import CropYieldPrediction from './components/CropYieldPrediction';
 import PlantDiseaseDetection from './components/PlantDiseaseDetection';
 import SoilAnalysis from './components/SoilAnalysis';
+import Agribot from './components/Agribot';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path='/plant-disease-detection' element={<PlantDiseaseDetection />}></Route>
               <Route path='/soil-analysis' element={<SoilAnalysis />}></Route>
               <Route path="/sf" element={<SmartFarming />} />
+              <Route path='/agribot' element={<Agribot />}></Route>
             </Routes>
           </div>
         </div>

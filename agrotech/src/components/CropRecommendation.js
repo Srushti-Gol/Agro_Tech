@@ -14,6 +14,7 @@ function CropRecommendation() {
         Rainfall: "",
     });
 
+    const [prediction, setPrediction] = useState(null);
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -52,6 +53,7 @@ function CropRecommendation() {
             }
             const data = await response.json();
             console.log('Prediction:', data.prediction);
+            setPrediction(data.prediction);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -212,6 +214,12 @@ function CropRecommendation() {
                                 </button>
                             </div>
                         </form>
+                        {prediction && (
+                <div className="prediction-result">
+                    <h2>Prediction Result:</h2>
+                    <h5>{prediction}</h5>
+                </div>
+            )}
                     </div>
                 </div>
             </div>

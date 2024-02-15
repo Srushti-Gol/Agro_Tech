@@ -77,3 +77,6 @@
     cursor: pointer;
   }
   
+  .prediction-result h5{
+    text-align: center;
+  }

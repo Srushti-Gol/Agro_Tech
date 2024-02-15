@@ -8,6 +8,7 @@ function SoilAnalysis() {
   const [formData, setFormData] = useState({
     soilImage: null,
   });
+  const [prediction, setPrediction] = useState(null);
 
   const handleChange = (e) => {
     const { name, files } = e.target;
@@ -28,27 +29,27 @@ function SoilAnalysis() {
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('soilImage', formData.soilImage);
-  
+
       const response = await axios.post('http://localhost:5000/predictSoil', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log(formDataToSend);
-      console.log(response.data); // Handle response data here, maybe display it to the user
+      const data = await response.json(); 
+      setPrediction(data.prediction);
     } catch (error) {
       console.error('Error analyzing soil:', error);
-      // Handle error, maybe display an error message to the user
     }
   };
-  
+
 
   return (
     <div className="d-form-container">
-      <ToastContainer 
-                className="Toastify__toast-container" 
-                toastClassName="Toastify__toast" 
-                bodyClassName="Toastify__toast-body"
+      <ToastContainer
+        className="Toastify__toast-container"
+        toastClassName="Toastify__toast"
+        bodyClassName="Toastify__toast-body"
       />
       <div className="d-form-text-section">
         <div className="col-xxl-8 col-xl-9 col-lg-9 col-md-7 col-sm-9">
@@ -85,6 +86,12 @@ function SoilAnalysis() {
                 </button>
               </div>
             </form>
+            {prediction && (
+              <div className="prediction-result">
+                <h2>Soil:</h2>
+                <h5>{prediction}</h5>
+              </div>
+            )}
           </div>
         </div>
       </div>

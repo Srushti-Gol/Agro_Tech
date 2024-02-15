@@ -14,6 +14,7 @@ function FertilizerRecommendation() {
         Phosphorous: "",
         Potassium: "",
     });
+    const [prediction, setPrediction] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,6 +53,7 @@ function FertilizerRecommendation() {
             }
             const data = await response.json();
             console.log('Prediction:', data.prediction);
+            setPrediction(data.prediction);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -59,9 +61,9 @@ function FertilizerRecommendation() {
 
     return (
         <div className="d-form-container">
-            <ToastContainer 
-                className="Toastify__toast-container" 
-                toastClassName="Toastify__toast" 
+            <ToastContainer
+                className="Toastify__toast-container"
+                toastClassName="Toastify__toast"
                 bodyClassName="Toastify__toast-body"
             />
             <div className="d-form-text-section">
@@ -248,6 +250,12 @@ function FertilizerRecommendation() {
                                 </button>
                             </div>
                         </form>
+                        {prediction && (
+                            <div className="prediction-result">
+                                <h2>Prediction Result:</h2>
+                                <h5>{prediction}</h5>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

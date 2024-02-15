@@ -7,6 +7,7 @@ function PlantDiseaseDetection() {
     const [formData, setFormData] = useState({
         plantImage: null,
       });
+      const [prediction, setPrediction] = useState(null);
     
       const handleChange = (e) => {
         const { name, files } = e.target;
@@ -39,10 +40,9 @@ function PlantDiseaseDetection() {
 
             const data = await response.json();
             console.log("Detection Result:", data);
-            // Add logic to handle detection result, such as displaying it to the user.
+            setPrediction(data.prediction);
         } catch (error) {
             console.error("Error:", error.message);
-            // Add logic to handle errors, such as displaying an error message to the user.
         }
     };
     
@@ -88,6 +88,12 @@ function PlantDiseaseDetection() {
                     </button>
                   </div>
                 </form>
+                {prediction && (
+                            <div className="prediction-result">
+                                <h2>Disease :</h2>
+                                <h5>{prediction}</h5>
+                            </div>
+                        )}
               </div>
             </div>
           </div>

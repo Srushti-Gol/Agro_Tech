@@ -17,3 +17,25 @@ iframe {
     width: 400px;
     margin: 20px;
 }
+
+.categories button {
+    color: black; 
+  }
+  
+  .video-container {
+    width: 25%; /* Set the width of each video container to 25% for one row display */
+    padding: 10px; /* Add some padding around each video container */
+    box-sizing: border-box; /* Include padding in the width calculation */
+  }
+  
+  .videos {
+    display: flex; /* Use flexbox to layout videos in a row */
+    flex-wrap: wrap; /* Allow videos to wrap to the next row if needed */
+  }
+  
+  .video-container iframe {
+    width: 100%; /* Make the iframe fill the entire video container */
+    height: 250px; /* Adjust the height of each video display */
+  }
+  
+  

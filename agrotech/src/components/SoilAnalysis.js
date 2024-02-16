@@ -30,7 +30,7 @@ function SoilAnalysis() {
       const formDataToSend = new FormData();
       formDataToSend.append('soilImage', formData.soilImage);
 
-      const response = await axios.post('http://localhost:5000/predictSoil', formDataToSend, {
+      const response = await axios.post('http://localhost:5002/predictSoil', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

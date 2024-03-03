@@ -29,7 +29,7 @@ function PlantDiseaseDetection() {
             const formDataToSend = new FormData();
             formDataToSend.append("image", formData.plantImage);
     
-            const response = await fetch("http://localhost:5000/predictDisease", {
+            const response = await fetch("http://localhost:5003/predictDisease", {
                 method: "POST",
                 body: formDataToSend,
             });

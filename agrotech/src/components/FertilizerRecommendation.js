@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import axios from 'axios';
 import "./CSS/form.css";
+import "./CSS/dialog.css";
 import { ToastContainer, toast } from 'react-toastify';
+import { Dialog } from 'primereact/dialog';
 import './CSS/toast.css';
 
 function FertilizerRecommendation() {
@@ -15,6 +18,9 @@ function FertilizerRecommendation() {
         Potassium: "",
     });
     const [prediction, setPrediction] = useState(null);
+    const [visible, setVisible] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [inputText, setInputText] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -54,9 +60,30 @@ function FertilizerRecommendation() {
             const data = await response.json();
             console.log('Prediction:', data.prediction);
             setPrediction(data.prediction);
+            setVisible(true); 
+            setInputText("Give information about and what types of crop can be grown with fertilizer" + data.prediction);
+            console.log(data.prediction);
         } catch (error) {
             console.error('Error:', error);
         }
+
+        try {
+            console.log(inputText);
+            const response = await axios.post('http://localhost:5000/chat', { text: inputText });
+            const botMessage = {
+                text: response.data.message,
+                sender: 'bot',
+            };
+            setMessages(prevMessages => (prevMessages ? [...prevMessages, botMessage] : [botMessage])); // Append the new message to the existing messages array or create a new array if prevMessages is null or undefined
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+        
+    };
+
+    const onHide = () => {
+        setVisible(false);
+        setMessages([]);
     };
 
     return (
@@ -250,15 +277,42 @@ function FertilizerRecommendation() {
                                 </button>
                             </div>
                         </form>
-                        {prediction && (
+                        {/* {prediction && (
                             <div className="prediction-result">
                                 <h2>Prediction Result:</h2>
                                 <h5>{prediction}</h5>
                             </div>
-                        )}
+                        )}   */}
                     </div>
                 </div>
             </div>
+            <Dialog
+                visible={visible}
+                style={{ width: '50rem' }}
+                className="dialog-container"
+                headerClassName="dialog-header"
+                contentClassName="dialog-content"
+                footerClassName="dialog-footer"
+                onHide={onHide}
+            >
+                <div>
+                {prediction && (
+            <div className="prediction-result">
+                <h5> Fertilizer Recommended: </h5>
+                <h5>{prediction}</h5>
+            </div>
+        )}
+        {messages.length > 0 && (
+            <div>
+                {messages.map((message, index) => (
+                    <div key={index} className={`message ${message.sender}`}>
+                        <p>{message.text}</p>
+                    </div>
+                ))}
+            </div>
+        )}
+                </div>
+            </Dialog>
             <div className="steps-container">
                 <h2>Steps to Follow</h2>
                 <ol>

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
+import { Dialog } from 'primereact/dialog';
+import "./CSS/dialog.css";
 import './CSS/toast.css';
 import "./CSS/form.css";
 
@@ -11,6 +13,7 @@ function CropYieldPrediction() {
         Area: "",
     });
     const [prediction, setPrediction] = useState(null);
+    const [visible, setVisible] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,11 +53,17 @@ function CropYieldPrediction() {
             const data = await response.json();
             console.log('Prediction:', data.prediction);
             setPrediction(data.prediction);
+            setVisible(true); 
 
         } catch (error) {
             console.error('Error:', error);
         }
     };
+
+    const onHide = () => {
+        setVisible(false);
+    };
+
     return (
         <div className="d-form-container">
             <ToastContainer 
@@ -933,15 +942,33 @@ function CropYieldPrediction() {
                                 </button>
                             </div>
                         </form>
-                        {prediction && (
+                        {/* {prediction && (
                 <div className="prediction-result">
                     <h2>Prediction Result:</h2>
                     <h5>{prediction}</h5>
                 </div>
-            )}
+            )} */}
                     </div>
                 </div>
             </div>
+            <Dialog
+                visible={visible}
+                style={{ width: '50rem' }}
+                className="dialog-container"
+                headerClassName="dialog-header"
+                contentClassName="dialog-content"
+                footerClassName="dialog-footer"
+                onHide={onHide}
+            >
+                <div>
+                    {prediction && (
+                        <div className="prediction-result">
+                            <h5> Crop yielded will be: </h5>
+                            <h5>{prediction}</h5>
+                        </div>
+                    )}
+                </div>
+            </Dialog>
             <div className="steps-container">
                 <h2>Steps to Follow</h2>
                 <ol>

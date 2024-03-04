@@ -1,0 +1,25 @@
+.dialog-container {
+    width: 50rem;
+  }
+  
+  .dialog-header {
+    background-color: #274135;
+    color: #ffffff;
+    padding: 1rem;
+  }
+  
+  .dialog-content {
+    padding: 1rem;
+    background-image: url('https://themes.muffingroup.com/be/farm2/wp-content/uploads/2020/12/farm2-sectionbg4.png');
+    color: #2e2e2e;
+  }
+  
+  .dialog-footer {
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .dialog-footer .p-button {
+    margin-right: 1rem;
+  }
+  

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
+import { Dialog } from 'primereact/dialog';
+import "./CSS/dialog.css";
 import './CSS/toast.css';
 import "./CSS/form.css";
 
@@ -15,6 +18,10 @@ function CropRecommendation() {
     });
 
     const [prediction, setPrediction] = useState(null);
+    const [visible, setVisible] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [inputText, setInputText] = useState('');
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -26,7 +33,6 @@ function CropRecommendation() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // console.log("Hii");
         const emptyFields = [];
         for (const key in formData) {
             if (formData.hasOwnProperty(key) && (formData[key] === "" || formData[key] === 0 || formData[key] === undefined)) {
@@ -54,9 +60,30 @@ function CropRecommendation() {
             const data = await response.json();
             console.log('Prediction:', data.prediction);
             setPrediction(data.prediction);
+            setVisible(true);
+            setInputText("Give information about ideal conditions to grow " + data.prediction);
+            // console.log(data.prediction);
         } catch (error) {
             console.error('Error:', error);
         }
+
+        try {
+            console.log(inputText);
+            const response = await axios.post('http://localhost:5000/chat', { text: inputText });
+            const botMessage = {
+                text: response.data.message,
+                sender: 'bot',
+            };
+            setMessages(prevMessages => (prevMessages ? [...prevMessages, botMessage] : [botMessage])); 
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+
+    };
+
+    const onHide = () => {
+        setVisible(false);
+        setMessages([]);
     };
 
     return (
@@ -214,15 +241,42 @@ function CropRecommendation() {
                                 </button>
                             </div>
                         </form>
-                        {prediction && (
+                        {/* {prediction && (
                 <div className="prediction-result">
                     <h2>Prediction Result:</h2>
                     <h5>{prediction}</h5>
                 </div>
-            )}
+            )} */}
                     </div>
                 </div>
             </div>
+            <Dialog
+                visible={visible}
+                style={{ width: '50rem' }}
+                className="dialog-container"
+                headerClassName="dialog-header"
+                contentClassName="dialog-content"
+                footerClassName="dialog-footer"
+                onHide={onHide}
+            >
+                <div>
+                    {prediction && (
+                        <div className="prediction-result">
+                            <h5> Crop Recommended: </h5>
+                            <h5>{prediction}</h5>
+                        </div>
+                    )}
+                    {messages.length > 0 && (
+                        <div>
+                        {messages.map((message, index) => (
+                            <div key={index} className={`message ${message.sender}`}>
+                                <p>{message.text}</p>
+                            </div>
+                        ))}
+                        </div>
+                    )}
+                </div>
+            </Dialog>
             <div className="steps-container">
                 <h2>Steps to Follow</h2>
                 <ol>

@@ -20,7 +20,7 @@ function Agribot() {
       
         try {
             console.log(inputText);
-          const response = await axios.post('http://localhost:5001/chat', { text: inputText });
+          const response = await axios.post('http://localhost:5000/chat', { text: inputText });
           const botMessage = {
             text: response.data.message,
             sender: 'bot',

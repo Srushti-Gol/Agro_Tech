@@ -10,6 +10,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from pymongo import MongoClient
 from bson import json_util
+from openai import OpenAI
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -22,7 +23,8 @@ load_dotenv()
 MONGODB_URI = os.getenv('MONGODB_URI')
 client = MongoClient(MONGODB_URI)
 db = client.get_default_database()
-
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+openai_client = OpenAI(api_key = OPENAI_API_KEY)
 
 auth_collection = db['user']
 
@@ -99,7 +101,7 @@ def predict_crop():
 # for Fertilizer recommendation
 FertRecModel = joblib.load('../models/FertRecModel.joblib')
 
-ds_f = pd.read_csv('../../../../Dataset/Fertilizer Prediction.csv')
+ds_f = pd.read_csv('../Datasets/Fertilizer Prediction.csv')
 y_f = ds_f['Fertilizer Name'].copy()
 X_f = ds_f.drop('Fertilizer Name', axis=1).copy()
 
@@ -141,7 +143,7 @@ def predict_fert():
 # for Yield Prediction
 YieldPreModel = joblib.load('../models/YieldPreModel.pkl')
 
-ds_yield = pd.read_csv("../../../../Dataset/crop_production.csv")
+ds_yield = pd.read_csv("../Datasets/crop_production.csv")
 ds_yield = ds_yield.drop(['Crop_Year'], axis=1)
 ds_yield = ds_yield.drop(['State_Name'], axis=1)
 ds_yield = ds_yield.dropna()
@@ -169,6 +171,23 @@ def predict_yield():
     prediction_yield = YieldPreModel.predict(user_input_final_yield)
     print(prediction_yield)
     return jsonify({'prediction': prediction_yield[0]})
+
+#Calling API
+def generate_response(user_message):
+    response = openai_client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": user_message}]
+    )
+    return response.choices[0].message.content
+
+#For AgriBot
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    user_message = data.get('text')
+    bot_message = generate_response(user_message)
+    print("Bot's response:", bot_message)  
+    return jsonify({'message': bot_message})
 
 
 if __name__ == '__main__':

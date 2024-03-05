@@ -14,7 +14,7 @@ from openai import OpenAI
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
-CORS(app)  # Enable CORS for all routes
+CORS(app)  
 
 
 

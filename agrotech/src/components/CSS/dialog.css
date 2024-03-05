@@ -1,20 +1,22 @@
-.dialog-container {
+ /* .dialog-container {
     width: 50rem;
   }
-  
+  .dialog-container h1{
+    text-align: center;
+  }
   .dialog-header {
-    background-color: #274135;
+    background-color: black;
     color: #ffffff;
     padding: 1rem;
   }
   
   .dialog-content {
     padding: 1rem;
-    background-image: url('https://themes.muffingroup.com/be/farm2/wp-content/uploads/2020/12/farm2-sectionbg4.png');
+    background-color: #ffffff;
     color: #2e2e2e;
   }
   
-  .dialog-footer {
+ /* .dialog-footer {
     text-align: center;
     padding: 1rem;
   }
@@ -22,4 +24,4 @@
   .dialog-footer .p-button {
     margin-right: 1rem;
   }
-  
+   */ 

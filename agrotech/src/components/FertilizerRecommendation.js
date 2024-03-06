@@ -66,19 +66,6 @@ function FertilizerRecommendation() {
         } catch (error) {
             console.error('Error:', error);
         }
-
-        try {
-            console.log(inputText);
-            const response = await axios.post('http://localhost:5000/chat', { text: inputText });
-            const botMessage = {
-                text: response.data.message,
-                sender: 'bot',
-            };
-            setMessages(prevMessages => (prevMessages ? [...prevMessages, botMessage] : [botMessage])); // Append the new message to the existing messages array or create a new array if prevMessages is null or undefined
-        } catch (error) {
-            console.error('Error sending message:', error);
-        }
-        
     };
 
     const onHide = () => {

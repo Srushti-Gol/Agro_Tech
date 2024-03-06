@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import { Dialog } from 'primereact/dialog';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
+import loader from "../assets/Spinner-2.gif";
 import "./CSS/dialog.css";
 import './CSS/toast.css';
 import "./CSS/form.css";
@@ -18,9 +27,14 @@ function CropRecommendation() {
     });
 
     const [prediction, setPrediction] = useState(null);
-    const [visible, setVisible] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [inputText, setInputText] = useState('');
+    const [predicted_crop, setpredicted_crop] = useState();
+    const [crop_practices_recommendation, setcrop_practices_recommendation] = useState();
+    const [irrigation_practices_recommendation, setirrigation_practices_recommendation] = useState();
+    const [pest_control_methods_recommendation, setpest_control_methods_recommendation] = useState();
+    const [fertilizer_recommendation, setfertilizer_recommendation] = useState();
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = React.useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -47,13 +61,10 @@ function CropRecommendation() {
 
         try {
             console.log(JSON.stringify(formData));
-            const response = await fetch('http://localhost:5000/predictCrop', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
+            
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:5000/predictCrop', formData, { headers: { Authorization: `Bearer ${token}` } });
+            
             if (!response.ok) {
                 throw new Error('Failed to fetch prediction');
             }
@@ -65,18 +76,6 @@ function CropRecommendation() {
             // console.log(data.prediction);
         } catch (error) {
             console.error('Error:', error);
-        }
-
-        try {
-            console.log(inputText);
-            const response = await axios.post('http://localhost:5000/chat', { text: inputText });
-            const botMessage = {
-                text: response.data.message,
-                sender: 'bot',
-            };
-            setMessages(prevMessages => (prevMessages ? [...prevMessages, botMessage] : [botMessage])); 
-        } catch (error) {
-            console.error('Error sending message:', error);
         }
 
     };
@@ -241,12 +240,6 @@ function CropRecommendation() {
                                 </button>
                             </div>
                         </form>
-                        {/* {prediction && (
-                <div className="prediction-result">
-                    <h2>Prediction Result:</h2>
-                    <h5>{prediction}</h5>
-                </div>
-            )} */}
                     </div>
                 </div>
             </div>

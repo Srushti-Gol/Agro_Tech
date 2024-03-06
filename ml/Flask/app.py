@@ -94,6 +94,51 @@ def logout():
     unset_jwt_cookies(resp)
     return resp, 200
 
+def generate_crop_report(predicted_crop):
+    prompt_crop_practices = f"You are an agriculture expert recommending crop practices for the {predicted_crop} crop."
+    prompt_irrigation_practices = f"You are an agriculture expert analyzing soil. Based on the predicted crop '{predicted_crop}', recommend suitable irrigation practices."
+    prompt_pest_control_methods = f"You are an agriculture expert analyzing soil. Based on the predicted crop '{predicted_crop}', suggest effective pest control methods."
+    prompt_fertilizer_recommendation = f"You are an agriculture expert providing fertilizer recommendations for the {predicted_crop} crop."
+
+    response_1 = openai_client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Answer the question in less than 40 words based on the content below, and if the question can't be answered based on the content, say \"I don't know\"\n\n"},
+            {"role": "user", "content": prompt_crop_practices}
+        ],
+    )
+
+    response_2 = openai_client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Answer the question in less than 40 words based on the content below, and if the question can't be answered based on the content, say \"I don't know\"\n\n"},
+            {"role": "user", "content": prompt_irrigation_practices}
+        ],
+    )
+
+    response_3 = openai_client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Answer the question in less than 40 words based on the content below, and if the question can't be answered based on the content, say \"I don't know\"\n\n"},
+            {"role": "user", "content": prompt_pest_control_methods}
+        ],
+    )
+
+    response_4 = openai_client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Answer the question in less than 40 words based on the content below, and if the question can't be answered based on the content, say \"I don't know\"\n\n"},
+            {"role": "user", "content": prompt_fertilizer_recommendation}
+        ],
+    )
+
+    return {
+        'predicted_crop': predicted_crop,
+        'crop_practices_recommendation': response_1.choices[0].message.content,
+        'irrigation_practices_recommendation': response_2.choices[0].message.content,
+        'pest_control_methods_recommendation': response_3.choices[0].message.content,
+        'fertilizer_recommendation': response_4.choices[0].message.content,
+    }
 
 # for Crop Recommendation
 CropRecModel = joblib.load('../models/CropRecModel.joblib')
@@ -109,8 +154,10 @@ def predict_crop():
 
     # Make prediction
     prediction = CropRecModel.predict([features])
+
+    report = generate_crop_report(prediction[0])
     
-    return jsonify({'prediction': prediction[0]})
+    return jsonify(report), 200
 
 
 # for Fertilizer recommendation
@@ -145,15 +192,31 @@ def predict_fert():
             int(data['Potassium'])
         ]
     ]
-    print(new_data)
     new_data = ct_f.transform(new_data)
     new_data = sc_f.transform(new_data)
     
     # Make prediction
     prediction = FertRecModel.predict(new_data)
-    print(prediction)
-    # Return the prediction
-    return jsonify({'prediction': prediction[0]})
+    
+    # Generate recommendations
+    recommendations = generate_fertilizer_recommendations(data['Crop_Type'], prediction[0])
+    
+    # Return the prediction along with recommendations
+    return jsonify({'prediction': prediction[0], 'recommendations': recommendations})
+
+
+def generate_fertilizer_recommendations(crop_type, prediction):
+    prompt_fertilizer_recommendation = f"You are an agriculture expert providing fertilizer recommendations for {crop_type} crop. and fertilizer {prediction}"
+    
+    response = openai_client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Answer the question in less than 70 words based on the content below, and if the question can't be answered based on the content, say \"I don't know\"\n\n"},
+            {"role": "user", "content": prompt_fertilizer_recommendation}
+        ],
+    )
+    
+    return response.choices[0].message.content
 
 
 # for Yield Prediction

@@ -1,4 +1,4 @@
- /* .dialog-container {
+  .dialog-container {
     width: 50rem;
   }
   .dialog-container h1{
@@ -16,7 +16,7 @@
     color: #2e2e2e;
   }
   
- /* .dialog-footer {
+  .dialog-footer {
     text-align: center;
     padding: 1rem;
   }
@@ -24,4 +24,4 @@
   .dialog-footer .p-button {
     margin-right: 1rem;
   }
-   */ 
+   

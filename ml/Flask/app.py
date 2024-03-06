@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, unset_jwt_cookies
 from pymongo import MongoClient
 from bson import json_util
 from openai import OpenAI
@@ -28,9 +29,23 @@ openai_client = OpenAI(api_key = OPENAI_API_KEY)
 
 auth_collection = db['user']
 
+# Initialize JWTManager
+app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this to a random secret key
+jwt = JWTManager(app)
 
-#for login  
+# Function to get user identity for JWT token
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user['email']
 
+@app.route('/protected', methods=['GET'])
+@jwt_required()  # This will protect the route with JWT token authentication
+def protected():
+    # Access the current user identity
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+
+# Login route with JWT token creation
 @app.route('/login', methods=['POST'])
 def api_login():
     data = request.get_json()
@@ -44,13 +59,9 @@ def api_login():
 
     if user:
         if user['password'] == password:
-            session['user'] = {
-                'email': user['email'],
-                'name': user['name']
-            }
-            # Convert ObjectId to string
-            user['_id'] = str(user['_id'])
-            return jsonify({'message': 'Login successful', 'user': user})
+            # Create JWT token
+            access_token = create_access_token(identity=user)
+            return jsonify({'message': 'Login successful', 'access_token': access_token})
         else:
             return jsonify({'message': 'Incorrect password'}), 401
     else:
@@ -75,17 +86,21 @@ def api_signup():
     return jsonify({'message': 'Signup successful'})
 
 #logout
-@app.route('/logout', methods=['GET'])
+@app.route('/logout', methods=['POST'])
+@jwt_required()
 def logout():
-    session.clear()
-    return jsonify({'message': 'Logout successful'})
+    # Remove the JWT cookies from the response
+    resp = jsonify({'message': 'Logout successful'})
+    unset_jwt_cookies(resp)
+    return resp, 200
+
 
 # for Crop Recommendation
 CropRecModel = joblib.load('../models/CropRecModel.joblib')
 @app.route('/predictCrop', methods=['POST'])
+@jwt_required()
 def predict_crop():
     data = request.get_json()
-    
     # Convert values to float
     features = [float(data[key]) for key in ['Nitrogen', 'Phosphorous', 'Potassium', 'Temperature', 'Humidity', 'ph', 'Rainfall']]
     
@@ -113,6 +128,7 @@ sc_f = StandardScaler()
 X_f = sc_f.fit_transform(X_f)
 
 @app.route('/predictFert', methods=['POST'])
+@jwt_required()
 def predict_fert():
     data = request.get_json()
 
@@ -159,6 +175,7 @@ ohe_yield = OneHotEncoder(handle_unknown='ignore')
 ohe_yield.fit(x_train_yield[categorical_cols_yield])
 
 @app.route('/predictYield', methods=['POST'])
+@jwt_required()
 def predict_yield():
     data = request.get_json()
 
@@ -182,6 +199,7 @@ def generate_response(user_message):
 
 #For AgriBot
 @app.route('/chat', methods=['POST'])
+@jwt_required()
 def chat():
     data = request.get_json()
     user_message = data.get('text')

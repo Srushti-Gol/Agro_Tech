@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import './CSS/toast.css';
@@ -14,6 +14,7 @@ function Login() {
   });
 
   const [isRegister, setIsRegister] = useState(false);
+  // const [toastShown, setToastShown] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -43,16 +44,31 @@ function Login() {
 
     try {
       const response = await axios.post(isRegister ? `http://localhost:5000/signup` : `http://localhost:5000/login`, formData);
-      console.log(response.data);
-      localStorage.setItem("user",response.data)
-      console.log(localStorage.getItem("user"))
-      window.location.href = '/';
-      setIsRegister(true);
-      
+      const { data } = response;
+
+      // Check if login/signup was successful
+      if (response.status === 200) {
+        // Store the JWT token in local storage
+        localStorage.setItem('token', data.access_token);
+        // Redirect or perform other actions after successful authentication
+        window.location.href = '/';
+      } else {
+        // Handle unsuccessful login/signup
+        toast.error(data.message);
+      }
     } catch (error) {
-      console.log(error);
+      console.error('Error:', error);
     }
   };
+
+
+  useEffect(() => {
+    if (window.location.pathname === '/login') {
+      toast.info('Please login to continue.');
+    } else if (window.location.pathname === '/signup') {
+      toast.info('Please signup to create an account.');
+    }
+  }, []);
 
 
 

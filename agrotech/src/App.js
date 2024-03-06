@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Home from './components/Home';
@@ -13,6 +13,8 @@ import SoilAnalysis from './components/SoilAnalysis';
 import Agribot from './components/Agribot';
 
 function App() {
+  const isAuthenticated = localStorage.getItem('token') !== null;
+
   return (
     <div className="App">
       <Router>
@@ -20,16 +22,22 @@ function App() {
           <Navbar />
           <div className="content">
             <Routes>
-            <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/services" element={<Services />} />
-              <Route path='/crop-recommendation' element={<CropRecommendation />}></Route>
-              <Route path='/fertilizer-recommendation' element={<FertilizerRecommendation />}></Route>
-              <Route path='/crop-yield-prediction' element={<CropYieldPrediction />}></Route>
-              <Route path='/plant-disease-detection' element={<PlantDiseaseDetection />}></Route>
-              <Route path='/soil-analysis' element={<SoilAnalysis />}></Route>
-              <Route path="/sf" element={<SmartFarming />} />
-              <Route path='/agribot' element={<Agribot />}></Route>
+              {isAuthenticated ? (
+                <>
+                  <Route path="/crop-recommendation" element={<CropRecommendation />} />
+                  <Route path="/fertilizer-recommendation" element={<FertilizerRecommendation />} />
+                  <Route path="/crop-yield-prediction" element={<CropYieldPrediction />} />
+                  <Route path="/plant-disease-detection" element={<PlantDiseaseDetection />} />
+                  <Route path="/soil-analysis" element={<SoilAnalysis />} />
+                  <Route path="/sf" element={<SmartFarming />} />
+                  <Route path="/agribot" element={<Agribot />} />
+                </>
+              ) : (
+                <Route path="*" element={<Navigate to="/login" />} />
+              )}
             </Routes>
           </div>
         </div>

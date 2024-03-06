@@ -10,7 +10,7 @@ const Navbar = () => {
   // const history = useHistory();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem('token');
     setIsLoggedIn(!!user);
   }, []);
 
@@ -20,10 +20,11 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:5000/logout');
-      localStorage.removeItem('user');
-      setIsLoggedIn(false);
-      // history.push('/login');
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/logout', {}, { headers: { Authorization: `Bearer ${token}` } });
+      localStorage.removeItem('token'); // Remove the JWT token from local storage
+      setIsLoggedIn(false); // Update isLoggedIn state to indicate user is logged out
+      window.location.href = '/login';
     } catch (error) {
       console.log(error);
     }
@@ -61,7 +62,7 @@ const Navbar = () => {
             </li>
             {isLoggedIn ? (
               <li>
-                <NavLink to="/login" onClick={handleLogout}>Logout</NavLink>
+                <NavLink to="/" onClick={handleLogout}>Logout</NavLink>
               </li>
             ) : (
               <li>

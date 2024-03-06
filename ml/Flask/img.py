@@ -19,7 +19,7 @@ loaded_model = load_model('../models/plantDisease_model')
 class_names = ['brown spots', 'deficiency calcium', 'xanthomonas', 'stemphylium solani', 'mosaic vena kuning', 'virus king keriting']
 
 def generate_report(disease):
-    prompt_Symtoms = f"You are a Plant pathology and an expert working for a very reputed laboratory of plants .Give Symptoms for the plant leaf disease:{disease}"
+    prompt_Symptoms = f"You are a Plant pathology and an expert working for a very reputed laboratory of plants .Give Symptoms for the plant leaf disease:{disease}"
     prompt_Cause = f"You are a Plant pathology and an expert working for a very reputed laboratory of plants .Give Cause for the plant leaf disease:{disease}"
     prompt_Treatment = f"You are a Plant pathology and an expert working for a very reputed laboratory of plants .Give Treatment for the plant leaf disease:{disease}"
     prompt_Recommendation = f"You are a Plant pathology and an expert working for a very reputed laboratory of plants .Give Recommendation for the plant leaf disease:{disease}"
@@ -28,7 +28,7 @@ def generate_report(disease):
         model="gpt-3.5-turbo",  
         messages=[
            {"role": "system", "content": "Answer the question in less than 20 words based on the content below, and if the question can't be answered based on the content, say \"I don't know\"\n\n"},
-            {"role": "user","content": prompt_Symtoms}
+            {"role": "user","content": prompt_Symptoms}
         ],
     )
 

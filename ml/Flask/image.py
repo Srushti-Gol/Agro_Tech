@@ -65,7 +65,7 @@ def generate_soil_insights(soil_type):
 def predict_soil():
     try:
         # Load image data from the request
-        file = request.files['soilImage']
+        file = request.files['image']
         
         # Ensure that the file is in memory as bytes
         img_bytes = file.read()

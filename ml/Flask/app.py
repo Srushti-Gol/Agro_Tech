@@ -127,7 +127,7 @@ def generate_crop_report(predicted_crop):
     response_4 = openai_client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "Answer the question in less than 40 words based on the content below, and if the question can't be answered based on the content, say \"I don't know\"\n\n"},
+            {"role": "system", "content": "Answer the question in less than 40 words based on the content below, and if the question can't be answered based on the content, say \"urea\"\n\n"},
             {"role": "user", "content": prompt_fertilizer_recommendation}
         ],
     )

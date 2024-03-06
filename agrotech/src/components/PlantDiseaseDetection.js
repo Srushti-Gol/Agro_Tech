@@ -207,7 +207,7 @@ function PlantDiseaseDetection() {
               aria-labelledby="customized-dialog-title"
               open={open}
             >
-              <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title" >
+              <DialogTitle sx={{ m: 1, p: 3 }} id="customized-dialog-title" >
                 Report
               </DialogTitle>
               <IconButton

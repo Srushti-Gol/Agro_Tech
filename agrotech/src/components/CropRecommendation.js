@@ -1,19 +1,25 @@
 import React, { useState } from "react";
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
-import loader from "../assets/Spinner-2.gif";
-import "./CSS/dialog.css";
-import './CSS/toast.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./CSS/form.css";
+import loader from "../assets/Spinner-2.gif";
+import axios from "axios";
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
 
 function CropRecommendation() {
     const [formData, setFormData] = useState({
@@ -25,9 +31,6 @@ function CropRecommendation() {
         ph: "",
         Rainfall: "",
     });
-
-    const [prediction, setPrediction] = useState(null);
-    const [messages, setMessages] = useState([]);
     const [predicted_crop, setpredicted_crop] = useState();
     const [crop_practices_recommendation, setcrop_practices_recommendation] = useState();
     const [irrigation_practices_recommendation, setirrigation_practices_recommendation] = useState();
@@ -60,36 +63,37 @@ function CropRecommendation() {
         }
 
         try {
-            console.log(JSON.stringify(formData));
-            
+            setOpen(true);
+            setLoading(true);
+
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:5000/predictCrop', formData, { headers: { Authorization: `Bearer ${token}` } });
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch prediction');
-            }
-            const data = await response.json();
-            console.log('Prediction:', data.prediction);
-            setPrediction(data.prediction);
-            setVisible(true);
-            setInputText("Give information about ideal conditions to grow " + data.prediction);
-            // console.log(data.prediction);
+            const response = await axios.post(
+                'http://localhost:5000/predictCrop',
+                formData,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const data = await response.data;
+            setpredicted_crop(data.predicted_crop);
+            setcrop_practices_recommendation(data.crop_practices_recommendation);
+            setirrigation_practices_recommendation(data.irrigation_practices_recommendation);
+            setpest_control_methods_recommendation(data.pest_control_methods_recommendation);
+            setfertilizer_recommendation(data.fertilizer_recommendation);
         } catch (error) {
             console.error('Error:', error);
+        } finally {
+            setLoading(false);
         }
-
     };
 
-    const onHide = () => {
-        setVisible(false);
-        setMessages([]);
+    const handleClose = () => {
+        setOpen(false);
     };
 
     return (
         <div className="d-form-container">
-            <ToastContainer 
-                className="Toastify__toast-container" 
-                toastClassName="Toastify__toast" 
+            <ToastContainer
+                className="Toastify__toast-container"
+                toastClassName="Toastify__toast"
                 bodyClassName="Toastify__toast-body"
             />
             <div className="d-form-text-section">
@@ -240,36 +244,77 @@ function CropRecommendation() {
                                 </button>
                             </div>
                         </form>
+                        <BootstrapDialog
+                            onClose={handleClose}
+                            aria-labelledby="customized-dialog-title"
+                            open={open}
+                        >
+                            <DialogTitle sx={{ m: 1, p: 3 }} id="customized-dialog-title" >
+                                Report
+                            </DialogTitle>
+                            <IconButton
+                                aria-label="close"
+                                onClick={handleClose}
+                                sx={{
+                                    position: 'absolute',
+                                    right: 8,
+                                    top: 8,
+                                    color: (theme) => theme.palette.grey[500],
+                                }}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                            <DialogContent dividers>
+                                {loading && (
+                                    <Typography gutterBottom>
+                                        <img src={loader} alt="Loader" className="loader" />
+                                    </Typography>
+                                )}
+                                {!loading &&
+                                    predicted_crop &&
+                                    crop_practices_recommendation &&
+                                    irrigation_practices_recommendation &&
+                                    pest_control_methods_recommendation &&
+                                    fertilizer_recommendation && (
+                                        <>
+                                            <Typography gutterBottom>
+                                                <div className="prediction-result">
+                                                    <h2>Recommended Crop :</h2>
+                                                    <h5>{predicted_crop}</h5>
+                                                </div>
+                                            </Typography>
+                                            <Typography gutterBottom>
+                                                <div className="prediction-result">
+                                                    <h2>Crop Practices Recommendation : </h2>
+                                                    <h5>{crop_practices_recommendation}</h5>
+                                                </div>
+                                            </Typography>
+                                            <Typography gutterBottom>
+                                                <div className="prediction-result">
+                                                    <h2>Irrigation Practices Recommendation:</h2>
+                                                    <h5>{irrigation_practices_recommendation}</h5>
+                                                </div>
+                                            </Typography>
+                                            <Typography gutterBottom>
+                                                <div className="prediction-result">
+                                                    <h2>Pest Control Methods Recommendation :</h2>
+                                                    <h5>{pest_control_methods_recommendation}</h5>
+                                                </div>
+                                            </Typography>
+                                            <Typography gutterBottom>
+                                                <div className="prediction-result">
+                                                    <h2>Fertilizer Recommendation :</h2>
+                                                    <h5>{fertilizer_recommendation}</h5>
+                                                </div>
+                                            </Typography>
+                                        </>
+                                    )}
+                            </DialogContent>
+                        </BootstrapDialog>
+
                     </div>
                 </div>
             </div>
-            <Dialog
-                visible={visible}
-                style={{ width: '50rem' }}
-                className="dialog-container"
-                headerClassName="dialog-header"
-                contentClassName="dialog-content"
-                footerClassName="dialog-footer"
-                onHide={onHide}
-            >
-                <div>
-                    {prediction && (
-                        <div className="prediction-result">
-                            <h5> Crop Recommended: </h5>
-                            <h5>{prediction}</h5>
-                        </div>
-                    )}
-                    {messages.length > 0 && (
-                        <div>
-                        {messages.map((message, index) => (
-                            <div key={index} className={`message ${message.sender}`}>
-                                <p>{message.text}</p>
-                            </div>
-                        ))}
-                        </div>
-                    )}
-                </div>
-            </Dialog>
             <div className="steps-container">
                 <h2>Steps to Follow</h2>
                 <ol>

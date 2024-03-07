@@ -58,7 +58,7 @@ function PlantDiseaseDetection() {
       formDataToSend.append("image", formData.plantImage);
 
       const response = await axios.post(
-        "http://localhost:5003/predictDisease",
+        "http://localhost:5000/predictDisease",
         formDataToSend,
         {
           headers: {

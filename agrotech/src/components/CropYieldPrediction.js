@@ -1,9 +1,25 @@
 import React, { useState } from "react";
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
 import { ToastContainer, toast } from 'react-toastify';
-import { Dialog } from 'primereact/dialog';
-import "./CSS/dialog.css";
-import './CSS/toast.css';
+import 'react-toastify/dist/ReactToastify.css';
 import "./CSS/form.css";
+import loader from "../assets/Spinner-2.gif";
+import axios from "axios";
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
 
 function CropYieldPrediction() {
     const [formData, setFormData] = useState({
@@ -13,7 +29,8 @@ function CropYieldPrediction() {
         Area: "",
     });
     const [prediction, setPrediction] = useState(null);
-    const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = React.useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -39,29 +56,26 @@ function CropYieldPrediction() {
         }
 
         try {
-            console.log(JSON.stringify(formData));
-            const response = await fetch('http://localhost:5000/predictYield', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch prediction');
-            }
-            const data = await response.json();
-            console.log('Prediction:', data.prediction);
-            setPrediction(data.prediction);
-            setVisible(true); 
+            setOpen(true);
+            setLoading(true);
 
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                'http://localhost:5000/predictYield',
+                formData,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const data = await response.data;
+            setPrediction(data.prediction);
         } catch (error) {
             console.error('Error:', error);
+        }finally {
+            setLoading(false);
         }
     };
 
-    const onHide = () => {
-        setVisible(false);
+    const handleClose = () => {
+        setOpen(false);
     };
 
     return (
@@ -942,33 +956,50 @@ function CropYieldPrediction() {
                                 </button>
                             </div>
                         </form>
-                        {/* {prediction && (
-                <div className="prediction-result">
-                    <h2>Prediction Result:</h2>
-                    <h5>{prediction}</h5>
-                </div>
-            )} */}
+                        <BootstrapDialog
+                            onClose={handleClose}
+                            aria-labelledby="customized-dialog-title"
+                            open={open}
+                        >
+                            <DialogTitle sx={{ m: 1, p: 3 }} id="customized-dialog-title" >
+                                Report
+                            </DialogTitle>
+                            <IconButton
+                                aria-label="close"
+                                onClick={handleClose}
+                                sx={{
+                                    position: 'absolute',
+                                    right: 8,
+                                    top: 8,
+                                    color: (theme) => theme.palette.grey[500],
+                                }}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                            <DialogContent dividers>
+                                {loading && (
+                                    <Typography gutterBottom>
+                                        <img src={loader} alt="Loader" className="loader" />
+                                    </Typography>
+                                )}
+                                {!loading &&
+                                    prediction &&
+                                     (
+                                        <>
+                                            <Typography gutterBottom>
+                                                <div className="prediction-result">
+                                                    <h2>Predicted Yield:</h2>
+                                                    <h5>{prediction}</h5>
+                                                </div>
+                                            </Typography>
+                                        </>
+                                    )}
+                            </DialogContent>
+                        </BootstrapDialog>
                     </div>
                 </div>
             </div>
-            <Dialog
-                visible={visible}
-                style={{ width: '50rem' }}
-                className="dialog-container"
-                headerClassName="dialog-header"
-                contentClassName="dialog-content"
-                footerClassName="dialog-footer"
-                onHide={onHide}
-            >
-                <div>
-                    {prediction && (
-                        <div className="prediction-result">
-                            <h5> Crop yielded will be: </h5>
-                            <h5>{prediction}</h5>
-                        </div>
-                    )}
-                </div>
-            </Dialog>
+            
             <div className="steps-container">
                 <h2>Steps to Follow</h2>
                 <ol>

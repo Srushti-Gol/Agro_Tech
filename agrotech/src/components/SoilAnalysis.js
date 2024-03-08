@@ -59,7 +59,7 @@ function SoilAnalysis() {
       formDataToSend.append("image", formData.soilImage);
 
       const response = await axios.post(
-        "http://localhost:5002/predictSoil",
+        "http://localhost:5000/predictSoil",
         formDataToSend,
         {
           headers: {

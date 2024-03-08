@@ -20,12 +20,15 @@ function Agribot() {
       
         try {
             console.log(inputText);
-          const response = await axios.post('http://localhost:5000/chat', { text: inputText });
-          const botMessage = {
-            text: response.data.message,
-            sender: 'bot',
-          };
-          setMessages(prevMessages => [...prevMessages, botMessage]); // Update messages using the previous state
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:5000/chat', { text: inputText }, { headers: {
+                Authorization: `Bearer ${token}`
+              }});
+            const botMessage = {
+              text: response.data.message,
+              sender: 'bot',
+            };
+            setMessages(prevMessages => [...prevMessages, botMessage]); // Update messages using the previous state
         } catch (error) {
           console.error('Error sending message:', error);
         }

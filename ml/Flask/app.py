@@ -399,13 +399,8 @@ def predict_soil():
         file_path = os.path.join("./", file.filename)
         file.save(file_path)
 
-        result = CLIENT.infer(file_path, model_id="soil-test-classification/1")
-        predicted_classes = result.get('predicted_classes', [])
-        if predicted_classes:
-            result_value = predicted_classes[0]
-        else:
-            result_value = None
-
+        result = CLIENT.infer(file_path, model_id="soil-type-classification-dxvik/1")
+        result_value = result.get('top')
         os.remove(file_path)
 
         report = generate_soil_insights(result_value)

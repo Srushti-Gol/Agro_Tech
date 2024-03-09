@@ -38,7 +38,6 @@ const Comments = () => {
             <span>{comment.name}</span>
             <p>{comment.desc}</p>
           </div>
-          <span className="date">1 hour ago</span>
         </div>
       ))}
     </div>

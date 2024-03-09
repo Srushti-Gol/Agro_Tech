@@ -15,12 +15,12 @@ function Footer() {
             <div className="col-xs-6 col-md-3">
               <h6>Services</h6>
               <ul className="footer-links">
-                <li><a href="#Crop Recommendationr">Crop Recommendation</a></li>
-                <li><a href="#Crop Yield Prediction">Crop Yield Prediction</a></li>
-                <li><a href="#Fertilizer Recommendation">Fertilizer Recommendation</a></li>
-                <li><a href="#Soil Analysis">Soil Analysis</a></li>
-                <li><a href="#Plant Disease Detection">Plant Disease Detection</a></li>
-                <li><a href="#Agribot">Agribot</a></li>
+                <li><a href="/crop-recommendation">Crop Recommendation</a></li>
+                <li><a href="/crop-yield-prediction">Crop Yield Prediction</a></li>
+                <li><a href="/fertilizer-recommendation">Fertilizer Recommendation</a></li>
+                <li><a href="/soil-analysis">Soil Analysis</a></li>
+                <li><a href="/plant-disease-detection">Plant Disease Detection</a></li>
+                <li><a href="/agribot">Agribot</a></li>
               </ul>
             </div>
 

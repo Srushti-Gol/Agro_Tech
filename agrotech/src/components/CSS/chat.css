@@ -32,6 +32,13 @@
   clear: both;
 }
 
+.avatar {
+  width: 40px; /* Adjust the width of the avatar */
+  height: 40px; /* Adjust the height of the avatar */
+  border-radius: 50%; /* Make the avatar appear as a circle */
+  margin-right: 10px; /* Add some space between the avatar and the message content */
+}
+
 .user {
   background-color: #274135;
   color: #fdf0d5;
@@ -81,6 +88,7 @@
 
 ::-webkit-scrollbar {
     width: 5px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-thumb {

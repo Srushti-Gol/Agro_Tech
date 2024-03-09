@@ -56,14 +56,14 @@ function PlantDiseaseDetection() {
       setLoading(true);
       const formDataToSend = new FormData();
       formDataToSend.append("image", formData.plantImage);
-
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         "http://localhost:5000/predictDisease",
         formDataToSend,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       const data = await response.data;

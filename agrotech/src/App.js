@@ -11,6 +11,7 @@ import CropYieldPrediction from './components/CropYieldPrediction';
 import PlantDiseaseDetection from './components/PlantDiseaseDetection';
 import SoilAnalysis from './components/SoilAnalysis';
 import Agribot from './components/Agribot';
+import Community from './components/Community';
 
 function App() {
   const isAuthenticated = localStorage.getItem('token') !== null;
@@ -34,6 +35,7 @@ function App() {
                   <Route path="/soil-analysis" element={<SoilAnalysis />} />
                   <Route path="/sf" element={<SmartFarming />} />
                   <Route path="/agribot" element={<Agribot />} />
+                  <Route path="/community" element={<Community />} />
                 </>
               ) : (
                 <Route path="*" element={<Navigate to="/login" />} />

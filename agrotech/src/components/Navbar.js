@@ -60,6 +60,9 @@ const Navbar = () => {
             <li>
               <NavLink to="/sf">SmartFarming</NavLink>
             </li>
+            <li>
+              <NavLink to="/community">Community</NavLink>
+            </li>
             {isLoggedIn ? (
               <li>
                 <NavLink to="/" onClick={handleLogout}>Logout</NavLink>

@@ -18,6 +18,7 @@ import io
 from inference_sdk import InferenceHTTPClient
 from pymongo import MongoClient
 from bson import Binary
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -81,7 +82,8 @@ def api_login():
 
     if user:
         if user['password'] == password:
-            access_token = create_access_token(identity=user)
+            custom_expiration_time = timedelta(days=1)
+            access_token = create_access_token(identity=user,expires_delta=custom_expiration_time)
             user['_id'] = str(user['_id'])  # Convert ObjectId to string
             return jsonify({'message': 'Login successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
         else:

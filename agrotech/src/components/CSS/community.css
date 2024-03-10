@@ -185,3 +185,86 @@
   span{
     color: #000000;
   }
+
+  .share {
+    -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+    -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+    box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+    border-radius: 20px;
+    background-color: #ffffff; /* Change to your desired background color */
+    color: #000000; /* Change to your desired text color */
+    margin-bottom: 20px;
+  }
+  
+  .share-container {
+    padding: 20px;
+    width: 550px;
+    height: auto;
+  }
+  
+  .share-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .share-top img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .share-top input {
+    border: none;
+    outline: none;
+    padding: 20px 10px;
+    background-color: transparent;
+    width: 60%;
+    color: #000000; 
+  }
+  
+  hr {
+    margin: 20px 0px;
+    border: none;
+    height: 0.5px;
+    background-color: #e0e0e0; /* Change to your desired border color */
+  }
+  
+  .share-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .share-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .share-left .share-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  
+  .share-left .share-item img {
+    height: 20px;
+  }
+  
+  .share-left .share-item span {
+    font-size: 12px;
+    color: #808080; /* Change to your desired text color */
+  }
+  
+  .share-right button {
+    border: none;
+    padding: 5px;
+    color: #ffffff; /* Change to your desired text color */
+    cursor: pointer;
+    background-color: #5271ff; /* Change to your desired button background color */
+    border-radius: 3px;
+  }
+  

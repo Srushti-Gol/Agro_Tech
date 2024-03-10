@@ -12,6 +12,7 @@ import PlantDiseaseDetection from './components/PlantDiseaseDetection';
 import SoilAnalysis from './components/SoilAnalysis';
 import Agribot from './components/Agribot';
 import Community from './components/Community';
+import { AuthProvider } from './components/AuthContext';
 
 function App() {
   const isAuthenticated = localStorage.getItem('token') !== null;
@@ -19,6 +20,7 @@ function App() {
   return (
     <div className="App">
       <Router>
+      <AuthProvider>
         <div>
           <Navbar />
           <div className="content">
@@ -43,6 +45,7 @@ function App() {
             </Routes>
           </div>
         </div>
+        </AuthProvider>
       </Router>
     </div>
   );

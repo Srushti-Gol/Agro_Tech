@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext  } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import './CSS/toast.css';
 import farmImage from '../assets/farm1.jpg';
 import './CSS/login.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { AuthContext } from './AuthContext';
 
 function Login() {
+  const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,15 +47,12 @@ function Login() {
     try {
       const response = await axios.post(isRegister ? `http://localhost:5000/signup` : `http://localhost:5000/login`, formData);
       const { data } = response;
-
-      // Check if login/signup was successful
+      
       if (response.status === 200) {
-        // Store the JWT token in local storage
         localStorage.setItem('token', data.access_token);
-        // Redirect or perform other actions after successful authentication
+        login(data.user);
         window.location.href = '/';
       } else {
-        // Handle unsuccessful login/signup
         toast.error(data.message);
       }
     } catch (error) {

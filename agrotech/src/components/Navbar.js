@@ -1,18 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ReactComponent as Hamburger } from '../assets/h.svg';
 import axios from 'axios';
+import { AuthContext } from './AuthContext'; // Import the AuthContext
 import './CSS/navbar.css';
 
 const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const history = useHistory();
-
-  useEffect(() => {
-    const user = localStorage.getItem('token');
-    setIsLoggedIn(!!user);
-  }, []);
+  const { user,isAuthenticated, logout } = useContext(AuthContext); // Use the AuthContext
 
   const handleShowNavbar = () => {
     setShowNavbar(!showNavbar);
@@ -20,10 +15,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/logout', {}, { headers: { Authorization: `Bearer ${token}` } });
-      localStorage.removeItem('token'); // Remove the JWT token from local storage
-      setIsLoggedIn(false); // Update isLoggedIn state to indicate user is logged out
+      await logout(); 
       window.location.href = '/login';
     } catch (error) {
       console.log(error);
@@ -63,9 +55,12 @@ const Navbar = () => {
             <li>
               <NavLink to="/community">Community</NavLink>
             </li>
-            {isLoggedIn ? (
-              <li>
-                <NavLink to="/" onClick={handleLogout}>Logout</NavLink>
+            {isAuthenticated ? (
+              <li className="dropdown">
+                <NavLink to="/">Welcom, {user.name}</NavLink>
+              <div className="dropdown-content">
+              <NavLink to="/" onClick={handleLogout}>Logout</NavLink>
+              </div>
               </li>
             ) : (
               <li>

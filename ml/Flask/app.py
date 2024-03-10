@@ -37,7 +37,6 @@ CLIENT = InferenceHTTPClient(
 
 
 auth_collection = db['user']
-
 # Initialize JWTManager
 app.config['JWT_SECRET_KEY'] = 'super-secret'  
 jwt = JWTManager(app)
@@ -68,14 +67,14 @@ def api_login():
 
     if user:
         if user['password'] == password:
-            # Create JWT token
             access_token = create_access_token(identity=user)
-            return jsonify({'message': 'Login successful', 'access_token': access_token})
+            user['_id'] = str(user['_id'])  # Convert ObjectId to string
+            return jsonify({'message': 'Login successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
         else:
             return jsonify({'message': 'Incorrect password'}), 401
     else:
         return jsonify({'message': 'User not found'}), 404
-
+    
 #for Signup
 @app.route('/signup', methods=['POST'])
 def api_signup():
@@ -91,17 +90,18 @@ def api_signup():
     }
     
     auth_collection.insert_one(user)
-    print("Signup successful")
-    return jsonify({'message': 'Signup successful'})
+    access_token = create_access_token(identity=user)
+    user['_id'] = str(user['_id'])
+    return jsonify({'message': 'Signup successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
 
-#logout
-@app.route('/logout', methods=['POST'])
-@jwt_required()
-def logout():
-    # Remove the JWT cookies from the response
-    resp = jsonify({'message': 'Logout successful'})
-    unset_jwt_cookies(resp)
-    return resp, 200
+# #logout
+# @app.route('/logout', methods=['POST'])
+# @jwt_required()
+# def logout():
+#     # Remove the JWT cookies from the response
+#     resp = jsonify({'message': 'Logout successful'})
+#     unset_jwt_cookies(resp)
+#     return resp, 200
 
 def generate_crop_report(predicted_crop):
     prompt_crop_practices = f"You are an agriculture expert recommending crop practices for the {predicted_crop} crop."

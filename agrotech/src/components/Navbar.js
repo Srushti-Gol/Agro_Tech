@@ -1,7 +1,6 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ReactComponent as Hamburger } from '../assets/h.svg';
-import axios from 'axios';
 import { AuthContext } from './AuthContext'; // Import the AuthContext
 import './CSS/navbar.css';
 

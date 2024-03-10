@@ -1,7 +1,8 @@
-import React from 'react'
-import './CSS/community.css'
+import React, { useState, useEffect } from 'react';
+import './CSS/community.css';
 import userAvatar from '../assets/user-avatar.png';
 import Post from './Post';
+import axios from 'axios';
 
 const posts = [
   {
@@ -23,29 +24,100 @@ const posts = [
   },
 ];
 
-
 function Community() {
+  const [profilePic, setProfilePic] = useState('');
+  const [formData, setFormData] = useState({
+    profilePic: null,
+  });
+  const [loading, setLoading] = useState(false);
+
+  const fetchProfilePic = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/profilePic', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'arraybuffer', // Specify response type as arraybuffer
+      });
+  
+      // Convert the received binary data to base64 string
+      const base64String = btoa(
+        new Uint8Array(response.data).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          ''
+        )
+      );
+  
+      // Set the base64 string as the profile picture
+      setProfilePic(`data:image/jpeg;base64,${base64String}`);
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfilePic();
+  }, [formData]); // Add formData as dependency
+
+  const handleProfilePicChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files[0],
+    });
+  };
+
+  const handleProfilePicUpload = async () => {
+    try {
+      setLoading(true);
+      const formDataUpload = new FormData(); // Rename formData to formDataUpload
+      formDataUpload.append('profilePic', formData.profilePic);
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/updateProfilePic', formDataUpload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      // Update profile picture state after successful upload
+      fetchProfilePic(); // Call fetchProfilePic instead of setting profilePic directly
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      // Optional: You can show an error message to the user here.
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <div className="community">
         <div className="left-panel">
           <div className="profile-photo">
-            <img src={userAvatar} alt="User Avatar" className='profilephoto' />
+            {profilePic ? (
+              <img src={profilePic} alt="User Avatar" className="profilephoto" />
+              ) : (
+              <img src={userAvatar} alt="Default Avatar" className="profilephoto" />
+              )}
             <h4>User Name</h4>
-            <button className="btn-primary">Edit Profile Photo</button>
+            <input type="file" onChange={handleProfilePicChange} name="profilePic" />
+            <button className="btn-primary" onClick={handleProfilePicUpload}>
+              {loading ? 'Uploading...' : 'Upload Profile Photo'}
+            </button>
             <button className="btn-primary">Add Post</button>
           </div>
         </div>
         <div className="right-panel">
           <div className="posts">
-            {posts.map(post => (
+            {posts.map((post) => (
               <Post post={post} key={post.id} />
             ))}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Community
+export default Community;

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify ,session
+from flask import Flask, request, jsonify ,send_file
 from flask_cors import CORS
 import joblib
 import numpy as np
@@ -16,6 +16,8 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import io
 from inference_sdk import InferenceHTTPClient
+from pymongo import MongoClient
+from bson import Binary
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -28,6 +30,18 @@ client = MongoClient(MONGODB_URI)
 db = client.get_default_database()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 SOIL_API = os.getenv('SOIL_API')
+
+
+UPLOAD_FOLDER = 'images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+# Ensure the upload folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 
 openai_client = OpenAI(api_key = OPENAI_API_KEY)
 CLIENT = InferenceHTTPClient(
@@ -102,6 +116,60 @@ def logout():
     resp = jsonify({'message': 'Logout successful'})
     unset_jwt_cookies(resp)
     return resp, 200
+
+# Define profile pic
+@app.route('/profilePic', methods=['GET'])
+@jwt_required()   # Protect the route with JWT token authentication
+def get_profile_pic():
+    try:
+        # Get the email of the current user
+        current_user_email = get_jwt_identity()
+
+        # Query the database for the user's profile picture data
+        user = auth_collection.find_one({'email': current_user_email})
+
+        if user and 'profile_pic_data' in user:
+            # Retrieve the image binary data from MongoDB Atlas
+            profile_pic_data = user['profile_pic_data']
+
+            # Return the image file with appropriate MIME type
+            return send_file(io.BytesIO(profile_pic_data), mimetype='image/jpeg')
+        else:
+            # Return a message if the user is not found or profile picture data does not exist
+            return jsonify({'error': 'Profile picture not found'}), 404
+
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Failed to retrieve profile picture'}), 500
+
+# Modify the user profile
+@app.route('/updateProfilePic', methods=['POST'])
+@jwt_required()
+def update_profile_pic():
+    try:
+        # Get the email of the current user
+        current_user_email = get_jwt_identity()
+        
+        # Check if the request contains a file
+        if 'profilePic' not in request.files:
+            return jsonify({'error': 'No file provided in the request'}), 400
+         
+        # Get the profile picture file from the request
+        profile_pic_file = request.files['profilePic']
+        
+        # Read the file content
+        profile_pic_data = profile_pic_file.read()
+        profile_pic_data = Binary(profile_pic_data)
+        
+        # Update the profile picture data in the database
+        auth_collection.update_one({'email': current_user_email}, {'$set': {'profile_pic_data': profile_pic_data}})
+        
+        return jsonify({'message': 'Profile picture updated successfully'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Failed to update profile picture'}), 500
+    
+    
 
 def generate_crop_report(predicted_crop):
     prompt_crop_practices = f"You are an agriculture expert recommending crop practices for the {predicted_crop} crop."

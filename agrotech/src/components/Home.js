@@ -8,6 +8,7 @@ import './CSS/home.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import Footer from './Footer';
+import Home2 from './Home2';
 
 const items = [
   {
@@ -48,17 +49,6 @@ const reviews = [
   },
 ];
 
-
-// const features = [
-//   { name: 'Crop Recommendation', description: 'Discover the best crops for your farm.' },
-//   { name: 'Crop Yield Prediction', description: 'Predict and plan your harvest with accuracy.' },
-//   { name: 'Fertilizer Recommendation', description: 'Optimize fertilizer usage for maximum yield.' },
-//   { name: 'Soil Analysis', description: 'Understand your soil health for effective management.' },
-//   { name: 'Plant Disease Detection', description: 'Detect and diagnose plant diseases early.' },
-//   { name: 'Agribot Chat', description: 'Get instant answers to your farming queries.' },
-// ];
-
-
 function Home() {
   return (
     <div>
@@ -83,38 +73,7 @@ function Home() {
           </Paper>
         ))}
       </Carousel>
-      {/* <div className="container-fluid">
-        <div className="row">
-          <div className="col text-center mb-3">
-            <h1>Empowering Agriculture with Smart Solutions</h1>
-            <p>Revolutionizing the agricultural landscape by integrating advanced technologies.<br /> Transforming traditional farming practices with cutting-edge solutions for increased efficiency, productivity, and sustainability.</p>
-          </div>
-        </div>
-
-        <div className="row second-row">
-          <div className="col-md-4">
-            {features.slice(0, 3).map((feature, index) => (
-              <div key={index} className="row feature-row left">
-                <h3>{feature.name}</h3>
-                <h6>{feature.description}</h6>
-              </div>
-            ))}
-          </div>
-
-          <div className="col-md-4 text-center">
-            <div className="circular-image"></div>
-          </div>
-
-          <div className="col-md-4">
-            {features.slice(3).map((feature, index) => (
-              <div key={index} className="row feature-row">
-                <h3>{feature.name}</h3>
-                <h6>{feature.description}</h6>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div> */}
+      <Home2/>
 
       <div className='reviews-container'>
         <h2 className='text-center'>Expert Says..</h2>
@@ -128,7 +87,7 @@ function Home() {
           navButtonsAlwaysInvisible={false}
         >
           {reviews.map((review, index) => (
-            <Paper key={index} className='review-paper'>
+            <Paper key={index}  style={{ backgroundColor: 'transparent' }} className='review-paper'>
               <div className='review-content'>
                 <img src={review.img} alt={review.author} className='review-img' />
                 <div className='review-info'>

@@ -27,38 +27,6 @@ body{
   color: #ebeaea; 
 }
 
-.feature-row h3 {
-  margin-top: 20px;
-}
-
-.feature-row h6 {
-  margin-bottom: 50px; 
-}
-
-
-.second-row {
-  margin-top: 50px;
-  height: 400px;
-}
-
-.circular-image {
-  width: 400px; 
-  height: 400px; 
-  border-radius: 50%;
-  border: 7px solid #274135;
-  background: url('https://themes.muffingroup.com/be/farm2/wp-content/uploads/2020/12/farm2-wrapbg1.jpg') center/cover no-repeat; /* Add your image path */
-}
-
-.feature-row {
-  height: 133px;
-  margin-left: 10px;
-}
-
-.container-fluid{
-  margin-top: 50px;
-  margin-bottom: 50px;
-}
-
 .reviews-container {
   margin: 90px 8% 75px;
   background-image: url('https://themes.muffingroup.com/be/farm2/wp-content/uploads/2020/12/farm2-sectionbg4.png');
@@ -69,10 +37,10 @@ body{
 
 .reviews-container h2{
   color: #274135;
+  margin-bottom: 25px;
 }
 
 .review-paper {
-  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   padding: 20px;

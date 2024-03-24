@@ -297,9 +297,16 @@ function FertilizerRecommendation() {
                             </IconButton>
                             <DialogContent dividers>
                                 {loading && (
+                                    <>
                                     <Typography gutterBottom>
                                         <img src={loader} alt="Loader" className="loader" />
                                     </Typography>
+                                    <Typography gutterBottom>
+                                        <div className="prediction-result">
+                                            <h5>Please wait for some time we are generating Report for you</h5>
+                                        </div>
+                                    </Typography>
+                                </>
                                 )}
                                 {!loading &&
                                     prediction &&

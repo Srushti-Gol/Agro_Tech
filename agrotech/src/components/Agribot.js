@@ -43,25 +43,25 @@ function Agribot() {
           </div>
           {messages.map((message, index) => (
             <div>
-            <div key={index} className={`message ${message.sender}`}>
-            <img src={message.sender === 'bot' ? botAvatar : userAvatar} alt={message.sender} className="avatar" />
-              <div className="message-content">
-                <p>{message.text}</p>
+              <div key={index} className={`message ${message.sender}`}>
+                <img src={message.sender === 'bot' ? botAvatar : userAvatar} alt={message.sender} className="avatar" />
+                <div className="message-content">
+                  <p>{message.text}</p>
+                </div>
               </div>
             </div>
-            </div>
           ))}
-        </div>
-        <div>
-          <form onSubmit={sendMessage} className="input-container">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-            />
-            <button type='submit'>Send</button>
-          </form>
+          <div>
+            <form onSubmit={sendMessage} className="input-container">
+              <input
+                type="text"
+                placeholder="Type your message..."
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+              />
+              <button type='submit'>Send</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ body {
   padding: 0;
   font-family: 'Poppins', sans-serif;
   background-color: #fcfcfc;
+  color: #274135;
 }
 
 .container {
@@ -99,13 +100,13 @@ body {
   /* color: #f6f0ee; */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1300px) {
   .nav-elements ul li:not(:last-child) {
     margin-right: 30px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1200px) {
   .menu-icon {
     display: block;
     cursor: pointer;

@@ -1,19 +1,22 @@
-.service{
+.service {
   margin-top: 80px;
   margin-bottom: 80px;
 }
 
-.s_img{
-  max-width: 550px;
+.s_img {
+  max-width: 100%; 
   height: auto;
-  margin-left: 20px;
-  margin-right: 20px;
-} 
-
-.service .content{
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: auto; 
+  margin-right: auto;
+  display: block; 
 }
+
+.service .content {
+  /* margin-top: 0px;  */
+  text-align: justify; 
+  padding: 20px;
+}
+
 .service .btn-primary {
   background-color: #274135;
   color: #fdf0d5;
@@ -26,10 +29,12 @@
   border: none;
 }
 
-.service .content h2{
-  margin-bottom: 30px;
+.service .content h2 {
+  margin-bottom: 10px; 
+  color: #274135;
+  text-align: center;
 }
 
-.service .content p{
-  margin-bottom: 30px;
+.service .content p {
+  margin-bottom: 20px; 
 }

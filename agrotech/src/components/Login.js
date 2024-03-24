@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext  } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import './CSS/toast.css';
@@ -30,24 +30,24 @@ function Login() {
 
     const emptyFields = [];
     for (const key in formData) {
-        if (formData.hasOwnProperty(key) && (formData[key] === "" || formData[key] === 0 || formData[key] === undefined)) {
-            if(key === 'name' && isRegister)
-              emptyFields.push(key);
-            else if(key !== 'name') {
-              emptyFields.push(key);
-            }
+      if (formData.hasOwnProperty(key) && (formData[key] === "" || formData[key] === 0 || formData[key] === undefined)) {
+        if (key === 'name' && isRegister)
+          emptyFields.push(key);
+        else if (key !== 'name') {
+          emptyFields.push(key);
         }
+      }
     }
 
     if (emptyFields.length > 0) {
-        toast.error(`Please fill in the following fields: ${emptyFields.join(", ")}`);
-        return;
+      toast.error(`Please fill in the following fields: ${emptyFields.join(", ")}`);
+      return;
     }
 
     try {
       const response = await axios.post(isRegister ? `http://localhost:5000/signup` : `http://localhost:5000/login`, formData);
       const { data } = response;
-      
+
       if (response.status === 200) {
         localStorage.setItem('token', data.access_token);
         login(data.user);
@@ -78,10 +78,10 @@ function Login() {
 
   return (
     <div className="login-container">
-      <ToastContainer 
-                className="Toastify__toast-container" 
-                toastClassName="Toastify__toast" 
-                bodyClassName="Toastify__toast-body"
+      <ToastContainer
+        className="Toastify__toast-container"
+        toastClassName="Toastify__toast"
+        bodyClassName="Toastify__toast-body"
       />
       <div className="login-image-section">
         <img src={farmImage} alt="hello" />
@@ -154,9 +154,11 @@ function Login() {
               </div>
 
               <div className="align-items-center">
-                <button type="submit" className="btn btn-primary">
-                  {isRegister ? 'Register' : 'Login'}
-                </button>
+                <div className="text-center">
+                  <button type="submit" className="btn btn-primary">
+                    {isRegister ? 'Register' : 'Login'}
+                  </button>
+                </div>
               </div>
             </form>
             <div className="card-footer py-3 border-0">

@@ -10,18 +10,20 @@
   background-repeat: repeat;
   background-position: center;
   padding: 50px;
-  width: 1000px;
+  width: 100%;
+  max-width: 1000px;
   height: 80vh;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   position: relative;
+  overflow: hidden; /* Prevent horizontal overflow */
 }
 
 .chat {
   padding: 20px;
   overflow-y: auto;
-  height: calc(100% - 50px); 
+  height: calc(100% - 50px);
 }
 
 .message {
@@ -33,10 +35,10 @@
 }
 
 .avatar {
-  width: 40px; /* Adjust the width of the avatar */
-  height: 40px; /* Adjust the height of the avatar */
-  border-radius: 50%; /* Make the avatar appear as a circle */
-  margin-right: 10px; /* Add some space between the avatar and the message content */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .user {
@@ -57,14 +59,15 @@
   padding: 10px;
   background-color: transparent;
   position: absolute;
-  bottom: 3;
-  width: 90%;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .input-container input {
   flex: 1;
   padding: 10px;
-  border: 1px;
+  border: 1px solid #ccc;
   border-radius: 5px;
   margin-right: 10px;
 }
@@ -76,14 +79,11 @@
   color: white;
   cursor: pointer;
   background-color: #274135;
-  color: #fef6fc;
-  border-color: rgba(14, 253, 62, 0);
+  transition: background-color 0.3s ease;
 }
 
 .input-container button:hover {
-  background-color:  #5e9b50;
-  color: #faf0f8;
-  border-color: rgba(0, 129, 242, 0);
+  background-color: #5e9b50;
 }
 
 ::-webkit-scrollbar {

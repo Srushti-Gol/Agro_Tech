@@ -206,7 +206,7 @@ function SoilAnalysis() {
                 </button>
               </div>
             </form>
-            
+
             <BootstrapDialog
               onClose={handleClose}
               aria-labelledby="customized-dialog-title"
@@ -229,15 +229,22 @@ function SoilAnalysis() {
               </IconButton>
               <DialogContent dividers>
                 {loading && (
-                  <Typography gutterBottom>
-                    <img src={loader} alt="Loader" className="loader" />
-                  </Typography>
+                  <>
+                    <Typography gutterBottom>
+                      <img src={loader} alt="Loader" className="loader" />
+                    </Typography>
+                    <Typography gutterBottom>
+                      <div className="prediction-result">
+                        <h5>Please wait for some time we are generating Report for you</h5>
+                      </div>
+                    </Typography>
+                  </>
                 )}
                 {!loading &&
                   soil_type &&
                   crop_recommendation &&
                   fertilizer_recommendation &&
-                  irrigation_practices &&  
+                  irrigation_practices &&
                   pest_control_methods && (
                     <>
                       <Typography gutterBottom>
@@ -270,15 +277,15 @@ function SoilAnalysis() {
                           <h5>{pest_control_methods}</h5>
                         </div>
                       </Typography>
-                      </>
-                    )}
+                    </>
+                  )}
               </DialogContent>
               <DialogActions>
-              {!loading &&
-                (
-                <Button autoFocus onClick={handleDownloadPDF}>
-                  Download Report PDF
-                </Button> )}
+                {!loading &&
+                  (
+                    <Button autoFocus onClick={handleDownloadPDF}>
+                      Download Report PDF
+                    </Button>)}
               </DialogActions>
             </BootstrapDialog>
 

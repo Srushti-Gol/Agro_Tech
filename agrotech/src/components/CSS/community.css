@@ -1,30 +1,44 @@
 .community {
-    display: flex;
-    height: 91vh;
-  }
-  
-  .left-panel {
-    width: 30%;
-    background-image: url('https://themes.muffingroup.com/be/farm2/wp-content/uploads/2020/12/farm2-sectionbg4.png');
-    background-repeat: repeat;
-    background-position: center;
-    padding: 20px;
-    overflow: hidden;
-  }
-  
-  .right-panel {
-    width: 70%;
-    padding: 70px;
-    overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.left-panel {
+  background-image: url('https://themes.muffingroup.com/be/farm2/wp-content/uploads/2020/12/farm2-sectionbg4.png');
+  background-repeat: repeat;
+  background-position: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.right-panel {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.profile-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+  .community {
+    flex-direction: row;
   }
 
-  .profile-photo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 80px;
+  .left-panel {
+    width: 30%;
+    overflow: hidden;
   }
-  
+
+  .right-panel {
+    width: 70%;
+    overflow-y: auto;
+  }
+}
   .btn-primary {
     background-color: #274135;
     color: #fdf0d5;

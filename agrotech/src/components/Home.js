@@ -49,14 +49,14 @@ const reviews = [
 ];
 
 
-const features = [
-  { name: 'Crop Recommendation', description: 'Discover the best crops for your farm.' },
-  { name: 'Crop Yield Prediction', description: 'Predict and plan your harvest with accuracy.' },
-  { name: 'Fertilizer Recommendation', description: 'Optimize fertilizer usage for maximum yield.' },
-  { name: 'Soil Analysis', description: 'Understand your soil health for effective management.' },
-  { name: 'Plant Disease Detection', description: 'Detect and diagnose plant diseases early.' },
-  { name: 'Agribot Chat', description: 'Get instant answers to your farming queries.' },
-];
+// const features = [
+//   { name: 'Crop Recommendation', description: 'Discover the best crops for your farm.' },
+//   { name: 'Crop Yield Prediction', description: 'Predict and plan your harvest with accuracy.' },
+//   { name: 'Fertilizer Recommendation', description: 'Optimize fertilizer usage for maximum yield.' },
+//   { name: 'Soil Analysis', description: 'Understand your soil health for effective management.' },
+//   { name: 'Plant Disease Detection', description: 'Detect and diagnose plant diseases early.' },
+//   { name: 'Agribot Chat', description: 'Get instant answers to your farming queries.' },
+// ];
 
 
 function Home() {
@@ -83,7 +83,7 @@ function Home() {
           </Paper>
         ))}
       </Carousel>
-      <div className="container-fluid">
+      {/* <div className="container-fluid">
         <div className="row">
           <div className="col text-center mb-3">
             <h1>Empowering Agriculture with Smart Solutions</h1>
@@ -114,35 +114,35 @@ function Home() {
             ))}
           </div>
         </div>
-      </div>
-       
-      <div className='reviews'>
+      </div> */}
+
+      <div className='reviews-container'>
         <h2 className='text-center'>Expert Says..</h2>
-      <Carousel
-        autoPlay={true}
-        swipe={true}
-        indicators={false}
-        cycleNavigation={true}
-        animation="slide"
-        navButtonsAlwaysVisible={true}
-        navButtonsAlwaysInvisible={false}
-      >
-        {reviews.map((review, index) => (
-          <Paper key={index}>
-            <div style={{ position: 'relative' }}>
-              <img src={review.img} alt={review.author} />
-              <div className='review-container'>
-                <h3 className='review-title'>{review.author}</h3>
-                <h6 className='review-subtitle'>{review.occupation}</h6>
-                <p className='review-discreption'>{review.quote}</p>
+        <Carousel
+          autoPlay={true}
+          swipe={true}
+          indicators={false}
+          cycleNavigation={true}
+          animation="slide"
+          navButtonsAlwaysVisible={false}
+          navButtonsAlwaysInvisible={false}
+        >
+          {reviews.map((review, index) => (
+            <Paper key={index} className='review-paper'>
+              <div className='review-content'>
+                <img src={review.img} alt={review.author} className='review-img' />
+                <div className='review-info'>
+                  <h3 className='review-title'>{review.author}</h3>
+                  <h6 className='review-subtitle'>{review.occupation}</h6>
+                  <p className='review-description'>{review.quote}</p>
+                </div>
               </div>
-            </div>
-          </Paper>
-        ))}
-      </Carousel>
+            </Paper>
+          ))}
+        </Carousel>
       </div>
 
-     <Footer />
+      <Footer />
 
     </div>
   );

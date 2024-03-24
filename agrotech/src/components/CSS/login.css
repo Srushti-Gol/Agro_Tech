@@ -1,77 +1,129 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+  padding: 20px;
+  overflow: hidden;
+  color: #274135;
+}
+
+.label-large {
+  font-size: 21px;
+}
+
+.login-image-section {
+  flex: 1;
+  overflow: hidden;
+}
+
+.login-image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.login-text-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.login-container .card-title,
+.login-container .btn {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-container .btn-primary {
+  background-color: #274135;
+  color: #fef6fc;
+  border-color: rgba(14, 253, 62, 0);
+}
+
+.login-container .btn-primary:hover {
+  background-color: #5e9b50;
+  color: #faf0f8;
+  border-color: rgba(0, 129, 242, 0);
+}
+
+.login-container label {
+  font-size: 1rem;
+  color: black;
+}
+
+#name::placeholder,
+#password::placeholder,
+#email::placeholder {
+  color: #aeaeae;
+}
+
+#email,
+#password,
+#name {
+  padding: 15px;
+  font-size: 1rem;
+  border-radius: 20px;
+  color: black;
+}
+
+.login-container span {
+  color: red;
+  font-weight: 700;
+}
+
+#email:focus,
+#password:focus,
+#name:focus {
+  border-color: black;
+  box-shadow: none;
+  border-radius: 20px;
+}
+
+.underline {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Media Queries */
+@media (max-width: 990px) {
   .login-container {
-    display: flex;
-    height: 90vh;
-    padding: 20px; 
-    overflow: hidden;
+    flex-direction: column;
   }
-  
-  .label-large {
-    font-size: 21px; 
+
+  .login-container .card-title,
+  .login-container .btn {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .login-container .btn {
+    margin-top: 20px;
+  }
+
+  .login-container .card-title {
+    text-align: center;
   }
 
   .login-image-section {
-    flex: 1;
-    overflow: hidden;
+    order: 2;
+    height: 40vh;
   }
-  
-  .login-image-section img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; 
-  }
-  
+
   .login-text-section {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    order: 1;
   }
-  
-  .login-container .card-title {
-    margin-left: 38%; 
-  }
-  
-  .login-container .btn {
-    margin-left: 38%; 
-  }
-  .login-container .btn-primary {
-    background-color: #274135;
-    color: #fef6fc;
-    border-color: rgba(14, 253, 62, 0);
-  }
-  
-  .login-container .btn-primary:hover {
-    background-color:  #5e9b50;
-    color: #faf0f8;
-    border-color: rgba(0, 129, 242, 0);
+}
+
+@media (max-width: 576px) {
+  .label-large {
+    font-size: 18px;
   }
 
-  .login-container label{
-    font-size: 1rem;
-    color: black;
+  #email,
+  #password,
+  #name {
+    font-size: 0.9rem;
+    padding: 12px;
   }
-  #name::placeholder,#password::placeholder,#email::placeholder{
-    color: #aeaeae;
-  }
-  #email,#password,#name{
-    padding: 15px;
-    font-size: 1rem;
-    border-radius: 20px;
-    color: black;
-  }
-
-  .login-container span{
-    color: red;
-    font-weight: 700;
-  }
-  #email:focus , #password:focus , #name:focus{
-    border-color: black; 
-    box-shadow: none;
-    border-radius: 20px;
-  }
-
-  .underline {
-    text-decoration: underline;
-    cursor: pointer;
-  }
+}

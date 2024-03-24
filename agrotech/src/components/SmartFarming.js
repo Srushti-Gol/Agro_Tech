@@ -78,7 +78,7 @@ function SmartFarming() {
   return (
     <div>
       <section>
-        <h2>Smart Farming</h2>
+        <h1 className='fs-10 card-title fw-bold mb-5'>Smart Farming</h1>
         <div className="categories">
           <Select
             value={options.find(option => option.value === category)}

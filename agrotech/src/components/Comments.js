@@ -1,42 +1,83 @@
-import React from "react";
-// import { AuthContext } from "../../context/authContext";
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { AuthContext } from './AuthContext';
 
-const Comments = () => {
-//   const { currentUser } = useContext(AuthContext);
-  // Temporary
-  const comments = [
-    {
-      id: 1,
-      desc:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-      name: "John Doe",
-      userId: 1,
-      profilePicture:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    },
-    {
-      id: 2,
-      desc:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-      name: "Jane Doe",
-      userId: 2,
-      profilePicture:
-        "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    },
-  ];
+const Comments = ({ postId, userId }) => {
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/getComments?postId=${postId}`);
+        setComments(response.data.comments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
+
+  const handleAddComment = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      // console.log(userId);
+      // console.log(postId);
+      const response = await axios.post(
+        'http://localhost:5000/addComment',
+        {
+          post_id: postId,
+          user_id: userId, 
+          comment_text: newComment,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status === 200) {
+        setComments([
+          ...comments,
+          { id: comments.length + 1, desc: newComment, name: 'You', user_id: userId },
+        ]);
+        setNewComment('');
+      } else {
+        console.error('Failed to add comment:', data.error);
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
+
   return (
     <div className="comments">
       <div className="write">
-        <img src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="" />
-        <input type="text" placeholder="write a comment" />
-        <button className="btn-primary">Send</button>
+        <input
+          type="text"
+          placeholder="Write a comment..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <button className="btn-primary" onClick={handleAddComment}>
+          Send
+        </button>
       </div>
       {comments.map((comment) => (
         <div className="comment" key={comment.id}>
-          <img src={comment.profilePicture} alt="" />
+          {/* Display user's profile picture */}
+          {comment.profilePicture && (
+            <img
+              src={`data:image/jpeg;base64,${comment.profilePicture}`}
+              alt="Comment"
+            />
+          )}
           <div className="info">
             <span>{comment.name}</span>
-            <p>{comment.desc}</p>
+            <p>{comment.comment_text}</p>
           </div>
         </div>
       ))}

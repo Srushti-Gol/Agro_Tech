@@ -19,6 +19,9 @@ from inference_sdk import InferenceHTTPClient
 from pymongo import MongoClient
 from bson import Binary
 from datetime import timedelta
+from bson import ObjectId
+import json
+import base64
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -52,6 +55,9 @@ CLIENT = InferenceHTTPClient(
 
 
 auth_collection = db['user']
+post_collection = db['post']
+comments_collection = db['comments']
+
 # Initialize JWTManager
 app.config['JWT_SECRET_KEY'] = 'super-secret'  
 jwt = JWTManager(app)
@@ -110,15 +116,6 @@ def api_signup():
     user['_id'] = str(user['_id'])
     return jsonify({'message': 'Signup successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
 
-# #logout
-# @app.route('/logout', methods=['POST'])
-# @jwt_required()
-# def logout():
-#     # Remove the JWT cookies from the response
-#     resp = jsonify({'message': 'Logout successful'})
-#     unset_jwt_cookies(resp)
-#     return resp, 200
-
 # Define profile pic
 @app.route('/profilePic', methods=['GET'])
 @jwt_required()   # Protect the route with JWT token authentication
@@ -172,6 +169,211 @@ def update_profile_pic():
         return jsonify({'error': 'Failed to update profile picture'}), 500
     
     
+# # Route to add a new post
+# @app.route('/addPost', methods=['POST'])
+# @jwt_required()
+# def add_post():
+#     try:
+#         # Get the email of the current user
+#         current_user_email = get_jwt_identity()
+        
+#         # Check if the request contains a file and caption
+#         if 'media' not in request.files:
+#             return jsonify({'error': 'No file provided in the request'}), 400
+#         if 'caption' not in request.form:
+#             return jsonify({'error': 'No caption provided in the request'}), 400
+         
+#         # Get the post image file from the request
+#         post_pic = request.files['media']
+        
+#         # Read the file content
+#         post_pic_data = post_pic.read()
+#         post_pic_data = Binary(post_pic_data)
+        
+#         # Get the caption text from the request
+#         caption = request.form['caption']
+        
+#         # Insert the post data into the database
+#         post_collection.insert_one({
+#             'user_email': current_user_email,
+#             'post_pic_data': post_pic_data,
+#             'caption': caption,
+#             'comments': 0,
+#             'likes' : 0,
+#             'ulikes':[]
+#         })
+        
+#         return jsonify({'message': 'Post added successfully'}), 200
+#     except Exception as e:
+#         print(e)
+#         return jsonify({'error': 'Failed to add post'}), 500
+
+# Route to add a new post
+@app.route('/addPost', methods=['POST'])
+@jwt_required()
+def add_post():
+    try:
+        current_user_email = get_jwt_identity()
+        
+        if 'media' not in request.files:
+            return jsonify({'error': 'No file provided in the request'}), 400
+        if 'caption' not in request.form:
+            return jsonify({'error': 'No caption provided in the request'}), 400
+        
+        media = request.files['media']
+        caption = request.form['caption']
+        
+        if media.filename != '':
+            # Check if the file is an image or video
+            if media.filename.endswith('.jpg') or media.filename.endswith('.jpeg') or media.filename.endswith('.png'):
+                # If it's an image, read and store the file data as before
+                post_pic_data = media.read()
+                post_pic_data = Binary(post_pic_data)
+                post_collection.insert_one({
+                    'user_email': current_user_email,
+                    'post_pic_data': post_pic_data,
+                    'caption': caption,
+                    'comments': 0,
+                    'likes': 0,
+                    'ulikes': []
+                })
+            elif media.filename.endswith('.mp4'):
+                # If it's an MP4 video, read and store the file data as binary
+                video_data = media.read()
+                video_data = Binary(video_data)
+                post_collection.insert_one({
+                    'user_email': current_user_email,
+                    'video_data': video_data,
+                    'caption': caption,
+                    'comments': 0,
+                    'likes': 0,
+                    'ulikes': []
+                })
+            else:
+                return jsonify({'error': 'Unsupported file format'}), 400
+        
+        return jsonify({'message': 'Post added successfully'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Failed to add post'}), 500
+    
+# Route to fetch posts
+@app.route('/getPosts', methods=['GET'])
+def get_posts():
+    try:
+        posts = list(post_collection.find({}))
+        
+        for post in posts:
+            user_email = post['user_email']
+            user = auth_collection.find_one({'email': user_email}, {'profile_pic_data': 1, 'name': 1})
+            
+            if user and 'profile_pic_data' in user:
+                post['profilePic'] = base64.b64encode(user['profile_pic_data']).decode('utf-8')
+                post['username'] = user.get('name')
+            else:
+                post['profilePic'] = None
+                post['username'] = user.get('name')
+            
+            if 'post_pic_data' in post:
+                post['post_pic_data'] = base64.b64encode(post['post_pic_data']).decode('utf-8')
+            
+            if 'video_data' in post:
+                post['video_data'] = base64.b64encode(post['video_data']).decode('utf-8')  # Convert video data to base64
+            
+            post['_id'] = str(post['_id'])
+        
+        return json.dumps({'posts': posts}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Failed to fetch posts'}), 500
+    
+
+# Route to add a comment to a post
+@app.route('/addComment', methods=['POST'])
+def add_comment():
+    try:
+        data = request.get_json()
+        post_id = data['post_id']
+        user_id = data['user_id']
+        comment_text = data['comment_text']
+        
+        # Insert the comment into the comments collection
+        comments_collection.insert_one({
+            'post_id': post_id,
+            'user_id': user_id,
+            'comment_text': comment_text
+        })
+        
+        # Update the comments field of the post collection to increase the comment count by 1
+        post_collection.update_one(
+            {'_id': ObjectId(post_id)},
+            {'$inc': {'comments': 1}}
+        )
+        
+        return jsonify({'message': 'Comment added successfully'}), 200
+    
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Failed to add comment'}), 500
+    
+# Route to fetch comments for a post
+@app.route('/getComments', methods=['GET'])
+def get_comments():
+    try:
+        post_id = request.args.get('postId')
+        
+        # Query the comments collection to retrieve comments for the specified post ID
+        comments = list(comments_collection.find({'post_id': post_id}, {'_id': 0}))
+        
+        # Fetch additional user information (e.g., profile picture) for each comment
+        for comment in comments:
+            user_id = comment['user_id']
+            user = auth_collection.find_one({'_id': ObjectId(user_id)}, {'profile_pic_data': 1, 'name': 1})  # Updated field name
+            if user:
+                comment['profilePicture'] = base64.b64encode(user['profile_pic_data']).decode('utf-8')  # Updated field name
+                comment['name'] = user['name']
+        
+        return json.dumps({'comments': comments}), 200
+    
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Failed to fetch comments'}), 500
+    
+# Route to like/unlike a post
+@app.route('/likePost', methods=['POST'])
+@jwt_required()
+def like_post():
+    try:
+        data = request.get_json()
+        post_id = data['post_id']
+        user_id = data['user_id']
+        action = data['action']  # 'like' or 'unlike'
+
+        # Find the post by its ID
+        post = post_collection.find_one({'_id': ObjectId(post_id)})
+
+        if post:
+            ulikes = post.get('ulikes', [])
+            if action == 'like':
+                # Add the user ID to the ulikes array if it's not already there
+                if user_id not in ulikes:
+                    ulikes.append(user_id)
+            elif action == 'unlike':
+                # Remove the user ID from the ulikes array if it exists
+                if user_id in ulikes:
+                    ulikes.remove(user_id)
+
+            # Update the post document in the database with the modified ulikes array
+            post_collection.update_one({'_id': ObjectId(post_id)}, {'$set': {'ulikes': ulikes}})
+
+            return jsonify({'message': f'Post {action}d successfully'}), 200
+        else:
+            return jsonify({'error': 'Post not found'}), 404
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Failed to like/unlike post'}), 500
+
+   
 
 def generate_crop_report(predicted_crop):
     prompt_crop_practices = f"You are an agriculture expert recommending crop practices for the {predicted_crop} crop."
@@ -257,7 +459,7 @@ X_f = sc_f.fit_transform(X_f)
 @jwt_required()
 def predict_fert():
     data = request.get_json()
-
+    
     # Convert the received data to the format required by the model
     new_data = [
         [

@@ -14,8 +14,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import { AuthContext } from './AuthContext';
 import Image from "../assets/img.png";
-import Map from "../assets/map.png";
-import Friend from "../assets/friend.png";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -26,35 +24,17 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const posts = [
-  {
-    id: 1,
-    name: "John Doe",
-    userId: 1,
-    profilePic:
-      "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    img: "https://img.freepik.com/free-photo/green-meadow-meanders-into-wheat-field-horizon-generated-by-ai_188544-36101.jpg",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    userId: 2,
-    profilePic:
-      "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    desc: "Tenetur iste voluptates dolorem rem commodi voluptate pariatur, voluptatum, laboriosam consequatur enim nostrum cumque! Maiores a nam non adipisci minima modi tempore.",
-  },
-];
-
 function Community() {
   const { user } = useContext(AuthContext);
   const [profilePic, setProfilePic] = useState('');
   const [formData, setFormData] = useState({
     profilePic: null,
   });
-  const [formDataPost, setFormDataPost] = useState({
+  const [postFormData, setPostFormData] = useState({
     PostImg: null,
+    caption: '',
   });
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openPost, setOpenPost] = React.useState(false);
 
@@ -101,7 +81,8 @@ function Community() {
 
   useEffect(() => {
     fetchProfilePic();
-  }, [formData]); // Add formData as dependency
+    fetchPosts();
+  }, []); 
 
   const handleProfilePicChange = (e) => {
     const { name, files } = e.target;
@@ -112,16 +93,54 @@ function Community() {
   };
 
   const handlePostChange = (e) => {
-    const { name, files } = e.target;
-    setFormDataPost({
-      ...formDataPost,
-      [name]: files[0],
-    });
+    const { name, value, files } = e.target;
+    if (name === 'PostImg') {
+      setPostFormData({
+        ...postFormData,
+        [name]: files[0],
+      });
+    } else if (name === 'caption') {
+      setPostFormData({
+        ...postFormData,
+        [name]: value,
+      });
+    }
   };
 
-  const handleUplodePost = () => {
+  const handleUploadPost = async () => {
+    try {
+      setLoading(true);
+      const formDataUpload = new FormData();
+      formDataUpload.append('media', postFormData.PostImg);
+      formDataUpload.append('caption', postFormData.caption);
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/addPost', formDataUpload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      // Close the dialog after successful upload
+      setOpenPost(false);
+  
+    } catch (error) {
+      console.error('Error uploading post:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  }
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/getPosts');
+      setPosts(response.data.posts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
+
+
   const handleProfilePicUpload = async () => {
     try {
       setLoading(true);
@@ -228,7 +247,13 @@ function Community() {
                         ) : (
                           <img src={userAvatar} alt="" />
                         )}
-                        <input type="text" placeholder={`What's on your mind ${user.name}?`} />
+                        <input
+                          type="text"
+                          placeholder={`What's on your mind, ${user.name}?`}
+                          value={postFormData.caption}
+                          onChange={handlePostChange}
+                          name="caption"
+                        />
                       </div>
                       <hr />
                       <div className="share-bottom">
@@ -239,8 +264,8 @@ function Community() {
                               <img src={Image} alt="" />
                               <span>Add Image/Video</span>
                             </div>
-                            {formDataPost.PostImg && (
-                              <img src={URL.createObjectURL(formDataPost.PostImg)} alt="Chosen Image" style={{ maxWidth: '100%', marginTop: '10px' }} />
+                            {postFormData.PostImg && (
+                              <img src={URL.createObjectURL(postFormData.PostImg)} alt="Chosen Image" style={{ maxWidth: '100%', marginTop: '10px' }} />
                             )}
                           </label>
                         </div>
@@ -250,7 +275,7 @@ function Community() {
                 </Typography>
               </DialogContent>
               <DialogActions>
-                <Button className="btn-primary" onClick={handleUplodePost}>
+                <Button className="btn-primary" onClick={handleUploadPost}>
                   Share
                 </Button>
               </DialogActions>
@@ -259,8 +284,8 @@ function Community() {
         </div>
         <div className="right-panel">
           <div className="posts">
-            {posts.map((post) => (
-              <Post post={post} key={post.id} />
+            {posts.map((post, index) => (
+              <Post post={post} key={index} /> 
             ))}
           </div>
         </div>

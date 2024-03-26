@@ -56,7 +56,7 @@ const Navbar = () => {
             </li>
             {isAuthenticated ? (
               <li className="dropdown">
-                <NavLink to="/">Welcom, {user.name}</NavLink>
+                <NavLink to="/">Welcome, {user.name}</NavLink>
               <div className="dropdown-content">
               <NavLink to="/" onClick={handleLogout}>Logout</NavLink>
               </div>

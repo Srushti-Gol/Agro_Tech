@@ -11,36 +11,36 @@ const Post = ({ post }) => {
   const userString = localStorage.getItem("user");
   const user = JSON.parse(userString);
   const [commentOpen, setCommentOpen] = useState(false);
-  const [liked, setLiked] = useState(false);
-
-  useEffect(() => {
-    // Check if the current user has liked the post
-    setLiked(post.ulikes.includes(user._id));
-  }, [post.ulikes, user._id]);
+  const [liked, setLiked] = useState(post.ulikes.includes(user._id));
+  const [likes, setLikes] = useState(post.likes);
+  const [commentCount, setCommentCount] = useState(post.comments);
 
   const handleLike = async () => {
-    try{
-    // Simulate local state update
-    setLiked(!liked);
-    const token = localStorage.getItem('token');
-    await axios.post(
-      'http://localhost:5000/likePost',
-      {
-        post_id: post._id,
-        user_id: user._id, 
-        action: liked ? 'unlike' : 'like',
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'http://localhost:5000/likePost',
+        {
+          post_id: post._id,
+          user_id: user._id,
+          action: liked ? 'unlike' : 'like',
         },
-      } );
-       // Handle the response if necessary
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      // Update the liked and likes states if the request is successful
+      if (response.status === 200) {
+        setLiked(!liked);
+        // Update likes count based on the liked state
+        setLikes(liked ? likes - 1 : likes + 1);
+      }
     } catch (error) {
       console.error('Error:', error);
     }
-    
   };
 
   return (
@@ -77,14 +77,14 @@ const Post = ({ post }) => {
         <div className="info">
           <div className="item" onClick={handleLike}>
             {liked ? <FavoriteOutlinedIcon /> : <FavoriteBorderOutlinedIcon />}
-            {post.likes} Likes
+            {likes} Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            {post.comments} Comments
+            {commentCount} Comments
           </div>
         </div>
-        {commentOpen && <Comments postId={post._id} userId={user._id}/>}
+        {commentOpen && <Comments postId={post._id} userId={user._id} updateCommentCount={setCommentCount} />}
       </div>
     </div>
   );

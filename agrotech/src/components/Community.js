@@ -123,6 +123,7 @@ function Community() {
   
       // Close the dialog after successful upload
       setOpenPost(false);
+      window.location.reload();
   
     } catch (error) {
       console.error('Error uploading post:', error);

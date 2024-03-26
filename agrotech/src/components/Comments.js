@@ -1,29 +1,27 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { AuthContext } from './AuthContext';
 
-const Comments = ({ postId, userId }) => {
+const Comments = ({ postId, userId, updateCommentCount }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/getComments?postId=${postId}`);
-        setComments(response.data.comments);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/getComments?postId=${postId}`);
+      setComments(response.data.comments);
+      updateCommentCount(response.data.comments.length);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchComments();
   }, [postId]);
 
   const handleAddComment = async () => {
     try {
       const token = localStorage.getItem('token');
-      // console.log(userId);
-      // console.log(postId);
       const response = await axios.post(
         'http://localhost:5000/addComment',
         {
@@ -38,15 +36,12 @@ const Comments = ({ postId, userId }) => {
           },
         }
       );
-      const data = await response.json();
       if (response.status === 200) {
-        setComments([
-          ...comments,
-          { id: comments.length + 1, desc: newComment, name: 'You', user_id: userId },
-        ]);
+        // Add the new comment to the comments state
         setNewComment('');
+        fetchComments();
       } else {
-        console.error('Failed to add comment:', data.error);
+        console.error('Failed to add comment:', response.data.error);
       }
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -66,6 +61,7 @@ const Comments = ({ postId, userId }) => {
           Send
         </button>
       </div>
+      {/* Display all comments */}
       {comments.map((comment) => (
         <div className="comment" key={comment.id}>
           {/* Display user's profile picture */}

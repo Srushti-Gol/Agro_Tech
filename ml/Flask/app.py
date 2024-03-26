@@ -354,17 +354,21 @@ def like_post():
 
         if post:
             ulikes = post.get('ulikes', [])
+            likes = len(ulikes)
+
             if action == 'like':
                 # Add the user ID to the ulikes array if it's not already there
                 if user_id not in ulikes:
                     ulikes.append(user_id)
+                    likes += 1
             elif action == 'unlike':
                 # Remove the user ID from the ulikes array if it exists
                 if user_id in ulikes:
                     ulikes.remove(user_id)
+                    likes -= 1
 
-            # Update the post document in the database with the modified ulikes array
-            post_collection.update_one({'_id': ObjectId(post_id)}, {'$set': {'ulikes': ulikes}})
+            # Update the post document in the database with the modified ulikes array and likes count
+            post_collection.update_one({'_id': ObjectId(post_id)}, {'$set': {'ulikes': ulikes, 'likes': likes}})
 
             return jsonify({'message': f'Post {action}d successfully'}), 200
         else:
@@ -372,6 +376,7 @@ def like_post():
     except Exception as e:
         print(e)
         return jsonify({'error': 'Failed to like/unlike post'}), 500
+
 
    
 

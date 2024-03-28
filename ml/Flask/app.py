@@ -25,7 +25,7 @@ import base64
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
-CORS(app)  
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Connect to MongoDB
 load_dotenv()
@@ -688,5 +688,5 @@ def predict_soil():
         print(e)
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)

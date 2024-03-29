@@ -58,7 +58,7 @@ function PlantDiseaseDetection() {
       formDataToSend.append("image", formData.plantImage);
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        "http://localhost:5000/predictDisease",
+        "https://srushti3113-agrotech.hf.space/predictDisease",
         formDataToSend,
         {
           headers: {

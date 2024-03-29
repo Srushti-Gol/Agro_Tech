@@ -19,7 +19,7 @@ const Post = ({ post }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/likePost',
+        'https://srushti3113-agrotech.hf.space/likePost',
         {
           post_id: post._id,
           user_id: user._id,

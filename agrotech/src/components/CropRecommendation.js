@@ -68,7 +68,7 @@ function CropRecommendation() {
 
             const token = localStorage.getItem('token');
             const response = await axios.post(
-                'http://localhost:5000/predictCrop',
+                'https://srushti3113-agrotech.hf.space/predictCrop',
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

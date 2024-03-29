@@ -7,7 +7,7 @@ const Comments = ({ postId, userId, updateCommentCount }) => {
 
   const fetchComments = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/getComments?postId=${postId}`);
+      const response = await axios.get(`https://srushti3113-agrotech.hf.space/getComments?postId=${postId}`);
       setComments(response.data.comments);
       updateCommentCount(response.data.comments.length);
     } catch (error) {
@@ -23,7 +23,7 @@ const Comments = ({ postId, userId, updateCommentCount }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/addComment',
+        'https://srushti3113-agrotech.hf.space/addComment',
         {
           post_id: postId,
           user_id: userId, 

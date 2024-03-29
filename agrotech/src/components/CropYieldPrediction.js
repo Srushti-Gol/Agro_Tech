@@ -61,7 +61,7 @@ function CropYieldPrediction() {
 
             const token = localStorage.getItem('token');
             const response = await axios.post(
-                'http://localhost:5000/predictYield',
+                'https://srushti3113-agrotech.hf.space/predictYield',
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

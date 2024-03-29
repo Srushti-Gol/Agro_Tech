@@ -57,7 +57,7 @@ function Community() {
   const fetchProfilePic = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/profilePic', {
+      const response = await axios.get('https://srushti3113-agrotech.hf.space/profilePic', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -114,7 +114,7 @@ function Community() {
       formDataUpload.append('media', postFormData.PostImg);
       formDataUpload.append('caption', postFormData.caption);
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/addPost', formDataUpload, {
+      await axios.post('https://srushti3113-agrotech.hf.space/addPost', formDataUpload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -134,7 +134,7 @@ function Community() {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/getPosts');
+      const response = await axios.get('https://srushti3113-agrotech.hf.space/getPosts');
       setPosts(response.data.posts);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -148,7 +148,7 @@ function Community() {
       const formDataUpload = new FormData(); // Rename formData to formDataUpload
       formDataUpload.append('profilePic', formData.profilePic);
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/updateProfilePic', formDataUpload, {
+      await axios.post('https://srushti3113-agrotech.hf.space/updateProfilePic', formDataUpload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

@@ -23,7 +23,7 @@ function Agribot() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/chat', { text: inputText }, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.post('https://srushti3113-agrotech.hf.space/chat', { text: inputText }, { headers: { Authorization: `Bearer ${token}` } });
       const botMessage = {
         text: response.data.message,
         sender: 'bot',

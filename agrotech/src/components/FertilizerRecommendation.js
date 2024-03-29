@@ -66,7 +66,7 @@ function FertilizerRecommendation() {
             setLoading(true);
             const token = localStorage.getItem('token');
             const response = await axios.post(
-                'http://localhost:5000/predictFert',
+                'https://srushti3113-agrotech.hf.space/predictFert',
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

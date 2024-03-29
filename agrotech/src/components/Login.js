@@ -45,7 +45,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post(isRegister ? `http://localhost:5000/signup` : `http://localhost:5000/login`, formData);
+      const response = await axios.post(isRegister ? `https://srushti3113-agrotech.hf.space/signup` : `https://srushti3113-agrotech.hf.space/login`, formData);
       const { data } = response;
 
       if (response.status === 200) {

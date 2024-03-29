@@ -556,7 +556,7 @@ def chat():
     print("Bot's response:", bot_message)  
     return jsonify({'message': bot_message})
 
-loaded_model = load_model('../models/plantDisease_model')
+loaded_model = load_model('../models/plantDisease_model.h5')
 class_names = ['brown spots', 'deficiency calcium', 'xanthomonas', 'stemphylium solani', 'mosaic vena kuning', 'virus king keriting']
 
 def generate_report(disease):

@@ -4,6 +4,7 @@ import userAvatar from '../assets/user-avatar.png';
 import Post from './Post';
 import axios from 'axios';
 import Button from '@mui/material/Button';
+import loader from "../assets/Spinner-2.gif";
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -37,6 +38,7 @@ function Community() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openPost, setOpenPost] = React.useState(false);
+  const [openLoading, setOpenLoading] = React.useState(false);
 
   const handleClickOpenPost = () => {
     setOpenPost(true);
@@ -44,6 +46,9 @@ function Community() {
   const handleClosePost = () => {
     setOpenPost(false);
   };
+  const handleCloseLoad = () => {
+    setOpenLoading(false);
+  }
 
   const [openProfile, setOpenProfile] = React.useState(false);
 
@@ -57,7 +62,7 @@ function Community() {
   const fetchProfilePic = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://srushti3113-agrotech.hf.space/profilePic', {
+      const response = await axios.get('https://Vishwadeep17-agrotech.hf.space/profilePic', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -109,20 +114,20 @@ function Community() {
 
   const handleUploadPost = async () => {
     try {
+      setOpenPost(false);
       setLoading(true);
+      setOpenLoading(true);
       const formDataUpload = new FormData();
       formDataUpload.append('media', postFormData.PostImg);
       formDataUpload.append('caption', postFormData.caption);
       const token = localStorage.getItem('token');
-      await axios.post('https://srushti3113-agrotech.hf.space/addPost', formDataUpload, {
+      await axios.post('https://Vishwadeep17-agrotech.hf.space/addPost', formDataUpload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
-  
-      // Close the dialog after successful upload
-      setOpenPost(false);
+      
       window.location.reload();
   
     } catch (error) {
@@ -134,7 +139,7 @@ function Community() {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('https://srushti3113-agrotech.hf.space/getPosts');
+      const response = await axios.get('https://Vishwadeep17-agrotech.hf.space/getPosts');
       setPosts(response.data.posts);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -148,7 +153,7 @@ function Community() {
       const formDataUpload = new FormData(); // Rename formData to formDataUpload
       formDataUpload.append('profilePic', formData.profilePic);
       const token = localStorage.getItem('token');
-      await axios.post('https://srushti3113-agrotech.hf.space/updateProfilePic', formDataUpload, {
+      await axios.post('https://Vishwadeep17-agrotech.hf.space/updateProfilePic', formDataUpload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -281,6 +286,29 @@ function Community() {
                 </Button>
               </DialogActions>
             </BootstrapDialog>
+            <BootstrapDialog
+              onClose={handleCloseLoad}
+              aria-labelledby="customized-dialog-title"
+              open={openLoading}
+            >
+              <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+                loading
+              </DialogTitle>
+            <DialogContent dividers>
+                                {loading && (
+                                    <>
+                                    <Typography gutterBottom>
+                                        <img src={loader} alt="Loader" className="loader" />
+                                    </Typography>
+                                    <Typography gutterBottom>
+                                        <div className="prediction-result">
+                                            <h5>Please wait for some time, we are posting</h5>
+                                        </div>
+                                    </Typography>
+                                </>
+                                )}
+              </DialogContent>
+              </BootstrapDialog>
           </div>
         </div>
         <div className="right-panel">

@@ -59,7 +59,7 @@ function SoilAnalysis() {
       formDataToSend.append("image", formData.soilImage);
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        "https://srushti3113-agrotech.hf.space/predictSoil",
+        "https://Vishwadeep17-agrotech.hf.space/predictSoil",
         formDataToSend,
         {
           headers: {

@@ -39,6 +39,7 @@ function Community() {
   const [loading, setLoading] = useState(false);
   const [openPost, setOpenPost] = React.useState(false);
   const [openLoading, setOpenLoading] = React.useState(false);
+  const [openPosting, setOpenPosting] = React.useState(false);
 
   const handleClickOpenPost = () => {
     setOpenPost(true);
@@ -139,8 +140,10 @@ function Community() {
 
   const fetchPosts = async () => {
     try {
+      setOpenPosting(true);
       const response = await axios.get('https://Vishwadeep17-agrotech.hf.space/getPosts');
       setPosts(response.data.posts);
+      setOpenPosting(false);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
@@ -173,6 +176,23 @@ function Community() {
   return (
     <div>
       <div className="community">
+        {
+          openPosting ? (
+            <>
+            <div className="loader-container">
+               <Typography gutterBottom>
+        
+    <img src={loader} alt="Loader" className="loader" />
+
+                                    </Typography>
+                                    <Typography gutterBottom>
+                                        <div className="prediction-result">
+                                            <h5>Loading posts</h5>
+                                        </div>
+                                        </Typography>
+                             </div>
+            </>
+          ) : ( <>
         <div className="left-panel">
           <div className="profile-photo">
             {profilePic ? (
@@ -317,7 +337,7 @@ function Community() {
               <Post post={post} key={index} /> 
             ))}
           </div>
-        </div>
+        </div> </> )}
       </div>
     </div>
   );

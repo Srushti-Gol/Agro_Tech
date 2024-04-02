@@ -121,3 +121,8 @@ span {
     cursor: pointer;
   }
   
+  .report-loader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

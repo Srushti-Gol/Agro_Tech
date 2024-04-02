@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./CSS/form.css";
-import loader from "../assets/Spinner-2.gif";
+import loader from "../assets/loader.svg";
 import axios from "axios";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -268,7 +268,9 @@ function CropRecommendation() {
                                 {loading && (
                                     <>
                                         <Typography gutterBottom>
-                                            <img src={loader} alt="Loader" className="loader" />
+                                            <div className="report-loader" >
+                                                <img src={loader} alt="Loader" className="loader" />
+                                            </div>
                                         </Typography>
                                         <Typography gutterBottom>
                                             <div className="prediction-result">

@@ -39,7 +39,7 @@ function Agribot() {
       <div className="chat-container">
         <div className="chat">
           <div className="message bot">
-            <p>Welcome! ask your Question?</p>
+            <p>Welcome! How can I help You?</p>
           </div>
           {messages.map((message, index) => (
             <div>

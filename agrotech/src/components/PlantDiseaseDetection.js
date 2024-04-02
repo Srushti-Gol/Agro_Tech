@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./CSS/form.css";
-import loader from "../assets/Spinner-2.gif";
+import loader from "../assets/loader.svg";
 import { jsPDF } from "jspdf";
 import axios from "axios";
 
@@ -226,8 +226,9 @@ function PlantDiseaseDetection() {
                 {loading && (
                   <>
                   <Typography gutterBottom>
-                      <img src={loader} alt="Loader" className="loader" />
-                  </Typography>
+                  <div className="report-loader" >
+                                                <img src={loader} alt="Loader" className="loader" />
+                                            </div>                  </Typography>
                   <Typography gutterBottom>
                       <div className="prediction-result">
                           <h5>Please wait for some time we are generating Report for you</h5>

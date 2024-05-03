@@ -12,10 +12,10 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from pymongo import MongoClient
 from bson import json_util
 from openai import OpenAI
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import io
-from inference_sdk import InferenceHTTPClient
 from pymongo import MongoClient
 from bson import Binary
 from datetime import timedelta
@@ -25,7 +25,7 @@ import base64
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)  
 
 # Connect to MongoDB
 load_dotenv()
@@ -33,8 +33,11 @@ MONGODB_URI = os.getenv('MONGODB_URI')
 client = MongoClient(MONGODB_URI)
 db = client.get_default_database()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-SOIL_API = os.getenv('SOIL_API')
 
+
+@app.route('/')
+def hello_world():
+    return 'Hello success'
 
 UPLOAD_FOLDER = 'images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -46,11 +49,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+
 openai_client = OpenAI(api_key = OPENAI_API_KEY)
-CLIENT = InferenceHTTPClient(
-    api_url="https://classify.roboflow.com",
-    api_key= SOIL_API
-)
 
 
 auth_collection = db['user']
@@ -88,15 +88,15 @@ def api_login():
     if user:
         if user['password'] == password:
             custom_expiration_time = timedelta(days=1)
-            access_token = create_access_token(identity=user, expires_delta=custom_expiration_time)
+            access_token = create_access_token(identity=user,expires_delta=custom_expiration_time)
             user['_id'] = str(user['_id'])  # Convert ObjectId to string
-            return jsonify({'message': 'Login successful', 'access_token': access_token, 'user': {'_id': user['_id'], 'name': user['name']}})
+            return jsonify({'message': 'Login successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
         else:
             return jsonify({'message': 'Incorrect password'}), 401
     else:
-        return jsonify({'message': 'Invalid credentials'}), 401
-
-# for Signup
+        return jsonify({'message': 'User not found'}), 404
+    
+#for Signup
 @app.route('/signup', methods=['POST'])
 def api_signup():
     data = request.get_json()
@@ -104,20 +104,16 @@ def api_signup():
     email = data.get('email')
     password = data.get('password')
 
-    user = auth_collection.find_one({'email': email})
-    if user:
-        return jsonify({'message': 'User already exists'}), 409
-
-    new_user = {
+    user = {
         'name': name,
         'email': email,
         'password': password
     }
-
-    auth_collection.insert_one(new_user)
-    access_token = create_access_token(identity=new_user)
-    new_user['_id'] = str(new_user['_id'])
-    return jsonify({'message': 'Signup successful', 'access_token': access_token, 'user': {'_id': new_user['_id'], 'name': new_user['name']}})
+    
+    auth_collection.insert_one(user)
+    access_token = create_access_token(identity=user)
+    user['_id'] = str(user['_id'])
+    return jsonify({'message': 'Signup successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
 
 # Define profile pic
 @app.route('/profilePic', methods=['GET'])
@@ -430,7 +426,7 @@ def generate_crop_report(predicted_crop):
     }
 
 # for Crop Recommendation
-CropRecModel = joblib.load('../models/CropRecModel.joblib')
+CropRecModel = joblib.load('./models/CropRecModel.joblib')
 @app.route('/predictCrop', methods=['POST'])
 @jwt_required()
 def predict_crop():
@@ -450,9 +446,9 @@ def predict_crop():
 
 
 # for Fertilizer recommendation
-FertRecModel = joblib.load('../models/FertRecModel.joblib')
+FertRecModel = joblib.load('./models/FertRecModel.joblib')
 
-ds_f = pd.read_csv('../Datasets/Fertilizer Prediction.csv')
+ds_f = pd.read_csv('./Datasets/Fertilizer Prediction.csv')
 y_f = ds_f['Fertilizer Name'].copy()
 X_f = ds_f.drop('Fertilizer Name', axis=1).copy()
 
@@ -509,9 +505,9 @@ def generate_fertilizer_recommendations(crop_type, prediction):
 
 
 # for Yield Prediction
-YieldPreModel = joblib.load('../models/YieldPreModel.pkl')
+YieldPreModel = joblib.load('./models/YieldPreModel.pkl')
 
-ds_yield = pd.read_csv("../Datasets/crop_production.csv")
+ds_yield = pd.read_csv("./Datasets/crop_production.csv")
 ds_yield = ds_yield.drop(['Crop_Year'], axis=1)
 ds_yield = ds_yield.drop(['State_Name'], axis=1)
 ds_yield = ds_yield.dropna()
@@ -559,7 +555,7 @@ def chat():
     print("Bot's response:", bot_message)  
     return jsonify({'message': bot_message})
 
-loaded_model = load_model('../models/plantDisease_model.h5')
+loaded_model = load_model('./models/plantDisease_model.h5')
 class_names = ['brown spots', 'deficiency calcium', 'xanthomonas', 'stemphylium solani', 'mosaic vena kuning', 'virus king keriting']
 
 def generate_report(disease):
@@ -670,26 +666,34 @@ def generate_soil_insights(soil_type):
             'pest_control_methods': pest_control_response.choices[0].message.content,
             }
 
-
-
+soil_model = tf.keras.models.load_model('./models/model.h5')
 @app.route('/predictSoil', methods=['POST'])
 def predict_soil():
     try:
         file = request.files['image']
-        file_path = os.path.join("./", file.filename)
-        file.save(file_path)
+        # Ensure that the file is in memory as bytes
+        img_bytes = file.read()
 
-        result = CLIENT.infer(file_path, model_id="soil-type-classification-dxvik/1")
-        result_value = result.get('top')
-        os.remove(file_path)
+        # Load image from bytes
+        img = image.load_img(io.BytesIO(img_bytes), target_size=(256, 256))
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array /= 255.0  # Normalize the pixel values
 
-        report = generate_soil_insights(result_value)
+        # Make predictions
+        predictions = soil_model.predict(img_array)
+
+        # Get the predicted class index
+        predicted_class_index = np.argmax(predictions)
+
+        # Map the predicted class index to the class label
+        class_labels = ['Black Soil', 'Cinder Soil', 'Laterite Soil', 'Peat Soil', 'Yellow Soil']
+        predicted_class_label = class_labels[predicted_class_index]
+        
+        report = generate_soil_insights(predicted_class_label)
 
         return jsonify(report), 200
     
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)

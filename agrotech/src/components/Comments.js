@@ -7,7 +7,7 @@ const Comments = ({ postId, userId, updateCommentCount }) => {
 
   const fetchComments = async () => {
     try {
-      const response = await axios.get(`https://srushti3113-agrotech.hf.space/getComments?postId=${postId}`);
+      const response = await axios.get(`https://Vishwadeep17-agrotech.hf.space/getComments?postId=${postId}`);
       setComments(response.data.comments);
       updateCommentCount(response.data.comments.length);
     } catch (error) {

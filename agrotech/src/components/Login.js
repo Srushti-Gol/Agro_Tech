@@ -45,7 +45,7 @@ function Login() {
     }
 
     try {
-        const response = await axios.post(isRegister ? `https://srushti3113-agrotech.hf.space/signup` : `https://srushti3113-agrotech.hf.space/login`, formData);
+        const response = await axios.post(isRegister ? `https://Vishwadeep17-agrotech.hf.space/signup` : `https://Vishwadeep17-agrotech.hf.space/login`, formData);
         const { data } = response;
 
         if (response.status === 200) {
@@ -53,9 +53,10 @@ function Login() {
             login(data.user);
             window.location.href = '/';
         } else {
-            toast.error(data.message);
+            toast.error('Invalid credentials or User does not exists');
         }
     } catch (error) {
+      toast.error('Invalid credentials or User does not exists');
         console.error('Error:', error);
     }
 };

@@ -36,7 +36,7 @@ Welcome to the Agrotech project! Our goal is to use smart technology to improve 
 
 2. **Install Dependencies:**
    ```
-   cd backend
+   cd ml
    pip install -r requirements.txt
    ```
    ```

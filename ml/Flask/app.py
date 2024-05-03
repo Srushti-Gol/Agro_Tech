@@ -88,15 +88,15 @@ def api_login():
     if user:
         if user['password'] == password:
             custom_expiration_time = timedelta(days=1)
-            access_token = create_access_token(identity=user,expires_delta=custom_expiration_time)
+            access_token = create_access_token(identity=user, expires_delta=custom_expiration_time)
             user['_id'] = str(user['_id'])  # Convert ObjectId to string
-            return jsonify({'message': 'Login successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
+            return jsonify({'message': 'Login successful', 'access_token': access_token, 'user': {'_id': user['_id'], 'name': user['name']}})
         else:
             return jsonify({'message': 'Incorrect password'}), 401
     else:
-        return jsonify({'message': 'User not found'}), 404
-    
-#for Signup
+        return jsonify({'message': 'Invalid credentials'}), 401
+
+# for Signup
 @app.route('/signup', methods=['POST'])
 def api_signup():
     data = request.get_json()
@@ -104,16 +104,20 @@ def api_signup():
     email = data.get('email')
     password = data.get('password')
 
-    user = {
+    user = auth_collection.find_one({'email': email})
+    if user:
+        return jsonify({'message': 'User already exists'}), 409
+
+    new_user = {
         'name': name,
         'email': email,
         'password': password
     }
-    
-    auth_collection.insert_one(user)
-    access_token = create_access_token(identity=user)
-    user['_id'] = str(user['_id'])
-    return jsonify({'message': 'Signup successful', 'access_token': access_token , 'user' : {'_id':user['_id'],  'name': user['name']}})
+
+    auth_collection.insert_one(new_user)
+    access_token = create_access_token(identity=new_user)
+    new_user['_id'] = str(new_user['_id'])
+    return jsonify({'message': 'Signup successful', 'access_token': access_token, 'user': {'_id': new_user['_id'], 'name': new_user['name']}})
 
 # Define profile pic
 @app.route('/profilePic', methods=['GET'])

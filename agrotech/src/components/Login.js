@@ -30,35 +30,36 @@ function Login() {
 
     const emptyFields = [];
     for (const key in formData) {
-      if (formData.hasOwnProperty(key) && (formData[key] === "" || formData[key] === 0 || formData[key] === undefined)) {
-        if (key === 'name' && isRegister)
-          emptyFields.push(key);
-        else if (key !== 'name') {
-          emptyFields.push(key);
+        if (formData.hasOwnProperty(key) && (formData[key] === "" || formData[key] === 0 || formData[key] === undefined)) {
+            if (key === 'name' && isRegister)
+                emptyFields.push(key);
+            else if (key !== 'name') {
+                emptyFields.push(key);
+            }
         }
-      }
     }
 
     if (emptyFields.length > 0) {
-      toast.error(`Please fill in the following fields: ${emptyFields.join(", ")}`);
-      return;
+        toast.error(`Please fill in the following fields: ${emptyFields.join(", ")}`);
+        return;
     }
 
     try {
-      const response = await axios.post(isRegister ? `https://srushti3113-agrotech.hf.space/signup` : `https://srushti3113-agrotech.hf.space/login`, formData);
-      const { data } = response;
+        const response = await axios.post(isRegister ? `https://srushti3113-agrotech.hf.space/signup` : `https://srushti3113-agrotech.hf.space/login`, formData);
+        const { data } = response;
 
-      if (response.status === 200) {
-        localStorage.setItem('token', data.access_token);
-        login(data.user);
-        window.location.href = '/';
-      } else {
-        toast.error(data.message);
-      }
+        if (response.status === 200) {
+            localStorage.setItem('token', data.access_token);
+            login(data.user);
+            window.location.href = '/';
+        } else {
+            toast.error(data.message);
+        }
     } catch (error) {
-      console.error('Error:', error);
+        console.error('Error:', error);
     }
-  };
+};
+
 
 
   useEffect(() => {

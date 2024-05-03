@@ -46,7 +46,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-
 openai_client = OpenAI(api_key = OPENAI_API_KEY)
 CLIENT = InferenceHTTPClient(
     api_url="https://classify.roboflow.com",
